@@ -1,5 +1,7 @@
 # Particle Geometry Explorer
 
+![Particle Geometry Explorer Overview](img/pg-overviews.jpg)
+
 A sophisticated, interactive 3D particle simulation built with Three.js. This application allows users to explore complex geometric shapes, orbital systems, and dynamic motion effects in a visually stunning environment.
 
 ## 🌟 Features
