@@ -1053,6 +1053,18 @@ Sheep<!DOCTYPE html>
                         <option value="dodecahedron">Dodecahedron</option>
                         <option value="icosahedron">Icosahedron</option>
                         <option value="torus">Torus</option>
+                        <option value="seedoflife">Seed of Life</option>
+                        <option value="vectorequilibrium">Vector Equilibrium</option>
+                        <option value="lotusoflife">Lotus of Life</option>
+                        <option value="metatronscube">Metatron's Cube</option>
+                        <option value="floweroflife">Flower of Life</option>
+                        <option value="merkaba">Merkaba</option>
+                        <option value="64startetrahedron">64 Star Tetrahedron</option>
+                        <option value="philosopherstone">Philosopher Stone</option>
+                        <option value="nestedpolygons">Nested Polygons</option>
+                        <option value="goldenspiral">Golden Spiral</option>
+                        <option value="vesicapiscis">Vesica Piscis Chain</option>
+                        <option value="yinyang">Yin Yang Sacred</option>
                         <option value="happyface">😊 Happy Face</option>
                         <option value="rubberducky">🦦 Rubber Ducky</option>
                         <option value="skull">☠️ Skull & Crossbones</option>
@@ -1726,6 +1738,18 @@ Sheep<!DOCTYPE html>
             dodecahedron: '12 faces, 20 vertices',
             icosahedron: '20 faces, 12 vertices',
             torus: 'Donut-shaped ring',
+            seedoflife: 'Seven overlapping circles',
+            vectorequilibrium: 'Cuboctahedron geometry',
+            lotusoflife: 'Complex floral pattern',
+            metatronscube: 'Sacred geometry containing all solids',
+            floweroflife: 'Overlapping circles grid',
+            merkaba: 'Star tetrahedron',
+            '64startetrahedron': '64-grid star tetrahedron',
+            philosopherstone: 'Squared circle geometry',
+            nestedpolygons: 'Polygons within polygons',
+            goldenspiral: 'Fibonacci spiral sequence',
+            vesicapiscis: 'Interlocking circles chain',
+            yinyang: 'Sacred balance symbol',
             happyface: '😊 Smiley face with eyes and smile',
             rubberducky: '🦦 Classic bath time companion',
             dnahelix: '🧬 Double helix DNA structure',
@@ -1894,6 +1918,316 @@ Sheep<!DOCTYPE html>
                     const x = (majorRadius + minorRadius * Math.cos(v)) * Math.cos(u);
                     const y = (majorRadius + minorRadius * Math.cos(v)) * Math.sin(u);
                     const z = minorRadius * Math.sin(v);
+                    
+                    positions.push({x, y, z});
+                }
+            } else if (shapeType === 'seedoflife') {
+                const circles = 7;
+                const circleRadius = radius * 0.5;
+                
+                for (let i = 0; i < count; i++) {
+                    const circleIdx = Math.floor(Math.random() * circles);
+                    let cx = 0, cy = 0;
+                    
+                    if (circleIdx > 0) {
+                        const angle = (circleIdx - 1) * Math.PI / 3;
+                        cx = Math.cos(angle) * circleRadius;
+                        cy = Math.sin(angle) * circleRadius;
+                    }
+                    
+                    const theta = Math.random() * Math.PI * 2;
+                    positions.push({
+                        x: cx + Math.cos(theta) * circleRadius,
+                        y: cy + Math.sin(theta) * circleRadius,
+                        z: (Math.random() - 0.5) * 0.1
+                    });
+                }
+            } else if (shapeType === 'vectorequilibrium') {
+                // Cuboctahedron - 12 vertices + center
+                const vertices = [
+                    {x:1, y:1, z:0}, {x:1, y:-1, z:0}, {x:-1, y:1, z:0}, {x:-1, y:-1, z:0},
+                    {x:1, y:0, z:1}, {x:1, y:0, z:-1}, {x:-1, y:0, z:1}, {x:-1, y:0, z:-1},
+                    {x:0, y:1, z:1}, {x:0, y:1, z:-1}, {x:0, y:-1, z:1}, {x:0, y:-1, z:-1}
+                ];
+                
+                for (let i = 0; i < count; i++) {
+                    const v1 = vertices[Math.floor(Math.random() * vertices.length)];
+                    const v2 = vertices[Math.floor(Math.random() * vertices.length)];
+                    const t = Math.random();
+                    
+                    // Interpolate between vertices to create edges/faces
+                    positions.push({
+                        x: (v1.x + (v2.x - v1.x) * t) * radius * 0.7,
+                        y: (v1.y + (v2.y - v1.y) * t) * radius * 0.7,
+                        z: (v1.z + (v2.z - v1.z) * t) * radius * 0.7
+                    });
+                }
+            } else if (shapeType === 'lotusoflife') {
+                const layers = 3;
+                
+                for (let i = 0; i < count; i++) {
+                    const layer = Math.floor(Math.random() * layers);
+                    const petals = 6 + layer * 6;
+                    const petalIdx = Math.floor(Math.random() * petals);
+                    const angle = (petalIdx / petals) * Math.PI * 2;
+                    
+                    const r = radius * (0.3 + layer * 0.25);
+                    const t = Math.random() * Math.PI * 2;
+                    
+                    // Create petal shapes
+                    const px = Math.cos(angle) * r + Math.cos(t) * (r * 0.3);
+                    const py = Math.sin(angle) * r + Math.sin(t) * (r * 0.3);
+                    
+                    positions.push({
+                        x: px,
+                        y: py,
+                        z: (Math.random() - 0.5) * 0.2
+                    });
+                }
+            } else if (shapeType === 'metatronscube') {
+                // 13 circles centers
+                const centers = [{x:0, y:0}];
+                const r = radius * 0.4;
+                
+                // Inner ring
+                for(let i=0; i<6; i++) {
+                    const a = i * Math.PI / 3;
+                    centers.push({x: Math.cos(a)*r, y: Math.sin(a)*r});
+                }
+                // Outer ring
+                for(let i=0; i<6; i++) {
+                    const a = i * Math.PI / 3;
+                    centers.push({x: Math.cos(a)*r*2, y: Math.sin(a)*r*2});
+                }
+                
+                for (let i = 0; i < count; i++) {
+                    if (Math.random() < 0.3) {
+                        // Circles
+                        const c = centers[Math.floor(Math.random() * centers.length)];
+                        const theta = Math.random() * Math.PI * 2;
+                        positions.push({
+                            x: c.x + Math.cos(theta) * (r * 0.5),
+                            y: c.y + Math.sin(theta) * (r * 0.5),
+                            z: 0
+                        });
+                    } else {
+                        // Connecting lines
+                        const c1 = centers[Math.floor(Math.random() * centers.length)];
+                        const c2 = centers[Math.floor(Math.random() * centers.length)];
+                        const t = Math.random();
+                        positions.push({
+                            x: c1.x + (c2.x - c1.x) * t,
+                            y: c1.y + (c2.y - c1.y) * t,
+                            z: 0
+                        });
+                    }
+                }
+            } else if (shapeType === 'floweroflife') {
+                const gridSize = 3;
+                const circleRadius = radius * 0.3;
+                const centers = [];
+                
+                // Hexagonal grid generation
+                for (let q = -gridSize; q <= gridSize; q++) {
+                    for (let r = -gridSize; r <= gridSize; r++) {
+                        if (Math.abs(q + r) <= gridSize) {
+                            const x = circleRadius * Math.sqrt(3) * (q + r/2);
+                            const y = circleRadius * 3/2 * r;
+                            centers.push({x, y});
+                        }
+                    }
+                }
+                
+                for (let i = 0; i < count; i++) {
+                    const c = centers[Math.floor(Math.random() * centers.length)];
+                    const theta = Math.random() * Math.PI * 2;
+                    positions.push({
+                        x: c.x + Math.cos(theta) * circleRadius,
+                        y: c.y + Math.sin(theta) * circleRadius,
+                        z: (Math.random() - 0.5) * 0.1
+                    });
+                }
+            } else if (shapeType === 'merkaba') {
+                // Star Tetrahedron (two intersecting tetrahedrons)
+                const tetra1 = [
+                    {x:1, y:1, z:1}, {x:-1, y:-1, z:1}, {x:-1, y:1, z:-1}, {x:1, y:-1, z:-1}
+                ];
+                const tetra2 = [
+                    {x:-1, y:-1, z:-1}, {x:1, y:1, z:-1}, {x:1, y:-1, z:1}, {x:-1, y:1, z:1}
+                ];
+                
+                for (let i = 0; i < count; i++) {
+                    const set = Math.random() < 0.5 ? tetra1 : tetra2;
+                    const v1 = set[Math.floor(Math.random() * 4)];
+                    const v2 = set[Math.floor(Math.random() * 4)];
+                    const t = Math.random();
+                    
+                    positions.push({
+                        x: (v1.x + (v2.x - v1.x) * t) * radius * 0.8,
+                        y: (v1.y + (v2.y - v1.y) * t) * radius * 0.8,
+                        z: (v1.z + (v2.z - v1.z) * t) * radius * 0.8
+                    });
+                }
+            } else if (shapeType === '64startetrahedron') {
+                // Simplified 64 grid structure
+                const gridSize = 2;
+                const spacing = radius * 0.5;
+                
+                for (let i = 0; i < count; i++) {
+                    const gx = Math.floor(Math.random() * 4) - 1.5;
+                    const gy = Math.floor(Math.random() * 4) - 1.5;
+                    const gz = Math.floor(Math.random() * 4) - 1.5;
+                    
+                    // Create mini tetrahedrons at grid points
+                    const tx = (Math.random() - 0.5);
+                    const ty = (Math.random() - 0.5);
+                    const tz = (Math.random() - 0.5);
+                    
+                    // Project to tetrahedron edges
+                    const absX = Math.abs(tx), absY = Math.abs(ty), absZ = Math.abs(tz);
+                    let px=tx, py=ty, pz=tz;
+                    if (absX > absY && absX > absZ) px = tx > 0 ? 0.5 : -0.5;
+                    
+                    positions.push({
+                        x: gx * spacing + px * spacing * 0.8,
+                        y: gy * spacing + py * spacing * 0.8,
+                        z: gz * spacing + pz * spacing * 0.8
+                    });
+                }
+            } else if (shapeType === 'philosopherstone') {
+                // Squared Circle (Circle inside Square inside Triangle)
+                for (let i = 0; i < count; i++) {
+                    const part = Math.random();
+                    let x, y, z = 0;
+                    
+                    if (part < 0.4) { // Circle
+                        const theta = Math.random() * Math.PI * 2;
+                        x = Math.cos(theta) * radius * 0.5;
+                        y = Math.sin(theta) * radius * 0.5;
+                    } else if (part < 0.7) { // Square
+                        const side = Math.floor(Math.random() * 4);
+                        const t = Math.random() * 2 - 1;
+                        const s = radius * 0.5;
+                        if (side === 0) { x = t*s; y = s; }
+                        else if (side === 1) { x = s; y = t*s; }
+                        else if (side === 2) { x = t*s; y = -s; }
+                        else { x = -s; y = t*s; }
+                    } else { // Triangle
+                        const t = Math.random();
+                        const side = Math.floor(Math.random() * 3);
+                        const r = radius * 0.8;
+                        // Equilateral triangle vertices
+                        const v1 = {x: 0, y: r};
+                        const v2 = {x: r * Math.sin(2*Math.PI/3), y: r * Math.cos(2*Math.PI/3)};
+                        const v3 = {x: r * Math.sin(4*Math.PI/3), y: r * Math.cos(4*Math.PI/3)};
+                        
+                        if (side === 0) {
+                            x = v1.x + (v2.x - v1.x) * t;
+                            y = v1.y + (v2.y - v1.y) * t;
+                        } else if (side === 1) {
+                            x = v2.x + (v3.x - v2.x) * t;
+                            y = v2.y + (v3.y - v2.y) * t;
+                        } else {
+                            x = v3.x + (v1.x - v3.x) * t;
+                            y = v3.y + (v1.y - v3.y) * t;
+                        }
+                    }
+                    positions.push({x, y, z});
+                }
+            } else if (shapeType === 'nestedpolygons') {
+                const shapes = 5;
+                for (let i = 0; i < count; i++) {
+                    const shapeIdx = Math.floor(Math.random() * shapes) + 3; // 3 to 7 sides
+                    const r = radius * (0.2 + (shapeIdx-3) * 0.2);
+                    const side = Math.floor(Math.random() * shapeIdx);
+                    const t = Math.random();
+                    
+                    const a1 = side * 2 * Math.PI / shapeIdx - Math.PI/2;
+                    const a2 = (side + 1) * 2 * Math.PI / shapeIdx - Math.PI/2;
+                    
+                    const x1 = Math.cos(a1) * r;
+                    const y1 = Math.sin(a1) * r;
+                    const x2 = Math.cos(a2) * r;
+                    const y2 = Math.sin(a2) * r;
+                    
+                    positions.push({
+                        x: x1 + (x2 - x1) * t,
+                        y: y1 + (y2 - y1) * t,
+                        z: (Math.random() - 0.5) * 0.2
+                    });
+                }
+            } else if (shapeType === 'goldenspiral') {
+                const phi = (1 + Math.sqrt(5)) / 2;
+                for (let i = 0; i < count; i++) {
+                    const t = i / count;
+                    const angle = t * Math.PI * 8; // 4 turns
+                    const r = radius * Math.pow(phi, angle / (2*Math.PI)) * 0.1;
+                    
+                    positions.push({
+                        x: Math.cos(angle) * r,
+                        y: Math.sin(angle) * r,
+                        z: (Math.random() - 0.5) * 0.5
+                    });
+                }
+            } else if (shapeType === 'vesicapiscis') {
+                const chains = 5;
+                const r = radius * 0.4;
+                
+                for (let i = 0; i < count; i++) {
+                    const chain = Math.floor(Math.random() * chains);
+                    const cy = (chain - (chains-1)/2) * r;
+                    const cx = 0;
+                    
+                    // Two intersecting circles per chain link
+                    const side = Math.random() < 0.5 ? -1 : 1;
+                    const theta = Math.random() * Math.PI * 2;
+                    
+                    // Only keep points on the arc that forms the vesica piscis shape
+                    // Or just draw the two circles
+                    const circleCenterY = cy + side * r * 0.5;
+                    
+                    positions.push({
+                        x: Math.cos(theta) * r,
+                        y: circleCenterY + Math.sin(theta) * r,
+                        z: 0
+                    });
+                }
+            } else if (shapeType === 'yinyang') {
+                for (let i = 0; i < count; i++) {
+                    const part = Math.random();
+                    let x, y, z = 0;
+                    
+                    if (part < 0.4) {
+                        // Outer Circle
+                        const theta = Math.random() * Math.PI * 2;
+                        x = Math.cos(theta) * radius;
+                        y = Math.sin(theta) * radius;
+                    } else if (part < 0.7) {
+                        // S-Curve (Two semi-circles)
+                        const theta = Math.random() * Math.PI;
+                        const side = Math.random() < 0.5 ? 1 : -1;
+                        // Top semi-circle (right side) or Bottom semi-circle (left side)
+                        // Actually S-curve is:
+                        // Top circle: center (0, r/2), radius r/2, angle -PI/2 to PI/2 (right side)
+                        // Bottom circle: center (0, -r/2), radius r/2, angle PI/2 to 3PI/2 (left side)
+                        
+                        if (side === 1) {
+                            const a = -Math.PI/2 + Math.random() * Math.PI;
+                            x = Math.cos(a) * radius/2;
+                            y = radius/2 + Math.sin(a) * radius/2;
+                        } else {
+                            const a = Math.PI/2 + Math.random() * Math.PI;
+                            x = Math.cos(a) * radius/2;
+                            y = -radius/2 + Math.sin(a) * radius/2;
+                        }
+                    } else {
+                        // Two small dots
+                        const dot = Math.random() < 0.5 ? 1 : -1;
+                        const theta = Math.random() * Math.PI * 2;
+                        const dotRadius = radius * 0.1;
+                        x = Math.cos(theta) * dotRadius;
+                        y = dot * radius/2 + Math.sin(theta) * dotRadius;
+                    }
                     
                     positions.push({x, y, z});
                 }
@@ -3898,7 +4232,13 @@ Sheep<!DOCTYPE html>
         
         // Randomize
         function randomizeSettings() {
-            const shapes = ['sphere', 'tetrahedron', 'cube', 'octahedron', 'dodecahedron', 'icosahedron', 'torus', 'happyface', 'rubberducky', 'skull', 'dnahelix', 'text'];
+            const shapes = [
+                'sphere', 'tetrahedron', 'cube', 'octahedron', 'dodecahedron', 'icosahedron', 'torus', 
+                'seedoflife', 'vectorequilibrium', 'lotusoflife', 'metatronscube', 'floweroflife', 
+                'merkaba', '64startetrahedron', 'philosopherstone', 'nestedpolygons', 'goldenspiral', 
+                'vesicapiscis', 'yinyang',
+                'happyface', 'rubberducky', 'skull', 'dnahelix', 'text'
+            ];
             const sprites = ['square', 'circle', 'star', 'triangle', 'diamond', 'heart', 'happyface', 'skull', 'rubberducky'];
             const effects = ['none', 'pulse', 'wave', 'spiral', 'breathe', 'explode'];
             const palettes = ['default', 'fire', 'ice', 'forest', 'sunset', 'neon', 'gold', 'monochrome'];
