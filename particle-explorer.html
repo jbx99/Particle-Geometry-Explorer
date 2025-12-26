@@ -34,7 +34,11 @@ Sheep<!DOCTYPE html>
             border-radius: 12px;
             color: #fff;
             font-size: 14px;
-            max-width: 360px;
+            width: 360px;
+            min-width: 300px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             max-height: 90vh;
@@ -48,6 +52,18 @@ Sheep<!DOCTYPE html>
             pointer-events: none;
         }
         
+        #resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            cursor: nwse-resize;
+            background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.4) 50%);
+            border-radius: 0 0 12px 0;
+            z-index: 101;
+        }
+
         #drag-handle {
             background: linear-gradient(135deg, #ff006e, #8338ec);
             padding: 12px 15px;
@@ -103,9 +119,10 @@ Sheep<!DOCTYPE html>
         
         #controls-content {
             padding: 15px;
-            max-height: calc(90vh - 52px);
+            flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
+            margin-bottom: 10px; /* Space for resize handle */
         }
         
         #controls-content::-webkit-scrollbar {
@@ -1065,6 +1082,7 @@ Sheep<!DOCTYPE html>
                         <option value="goldenspiral">Golden Spiral</option>
                         <option value="vesicapiscis">Vesica Piscis Chain</option>
                         <option value="yinyang">Yin Yang Sacred</option>
+                        <option value="lsystem">L-System Fractal</option>
                         <option value="happyface">😊 Happy Face</option>
                         <option value="rubberducky">🦦 Rubber Ducky</option>
                         <option value="skull">☠️ Skull & Crossbones</option>
@@ -1414,34 +1432,57 @@ Sheep<!DOCTYPE html>
                 </div>
             </div>
         </div>
+        <div id="resize-handle"></div>
     </div>
     
     <div id="info">
         Drag: Rotate • Right-Click/Shift+Drag: Pan • Pinch/Scroll: Zoom • 3-Finger: Pan • Try Orbital Presets!
     </div>
 
+    <script>
+        // Global error handler - defined early to catch all errors
+        window.onerror = function(message, source, lineno, colno, error) {
+            const loadingEl = document.getElementById('loading');
+            if (loadingEl) {
+                loadingEl.classList.remove('hidden');
+                loadingEl.innerHTML = 'Global Error: ' + message + '<br><small>' + source + ':' + lineno + '</small>';
+                loadingEl.style.textAlign = 'center';
+                loadingEl.style.color = '#ff3333';
+                loadingEl.style.zIndex = '9999';
+            }
+            console.error('Global error:', error);
+        };
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // Check if THREE is loaded
         if (typeof THREE === 'undefined') {
-            document.getElementById('loading').textContent = 'Error: Three.js failed to load';
-            throw new Error('Three.js library not loaded');
+            throw new Error('Three.js library not loaded. Check connection.');
         }
         
-        // Scene setup
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ 
-            antialias: true, 
-            alpha: true,
-            preserveDrawingBuffer: true
-        });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
-        
-        camera.position.z = 8;
+        // Scene setup variables
+        let scene, camera, renderer;
+
+        try {
+            // Scene setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true, 
+                alpha: true,
+                preserveDrawingBuffer: true
+            });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+            
+            camera.position.z = 8;
+        } catch (e) {
+            document.getElementById('loading').textContent = 'Setup Error: ' + e.message;
+            throw e;
+        }
         
         // Particle system variables
         let particleSystem;
@@ -1750,6 +1791,7 @@ Sheep<!DOCTYPE html>
             goldenspiral: 'Fibonacci spiral sequence',
             vesicapiscis: 'Interlocking circles chain',
             yinyang: 'Sacred balance symbol',
+            lsystem: 'Fractal growth pattern (L-System)',
             happyface: '😊 Smiley face with eyes and smile',
             rubberducky: '🦦 Classic bath time companion',
             dnahelix: '🧬 Double helix DNA structure',
@@ -2231,6 +2273,84 @@ Sheep<!DOCTYPE html>
                     
                     positions.push({x, y, z});
                 }
+            } else if (shapeType === 'lsystem') {
+                // Recursive Fractal Tree (L-System like structure)
+                const segments = [];
+                const maxDepth = 5;
+                const angle = 25 * Math.PI / 180;
+                
+                function grow(position, direction, length, depth) {
+                    if (depth === 0) return;
+                    
+                    const end = position.clone().add(direction.clone().multiplyScalar(length));
+                    segments.push({start: position, end: end, length: length});
+                    
+                    const newLength = length * 0.75;
+                    
+                    // Branching logic
+                    // Rotate around different axes to create 3D volume
+                    const axis1 = new THREE.Vector3(1, 0, 0);
+                    const axis2 = new THREE.Vector3(0, 0, 1);
+                    const axis3 = new THREE.Vector3(0, 1, 0); // Twist
+                    
+                    // Branch 1
+                    const dir1 = direction.clone().applyAxisAngle(axis1, angle).applyAxisAngle(axis3, Math.random());
+                    grow(end.clone(), dir1, newLength, depth - 1);
+                    
+                    // Branch 2
+                    const dir2 = direction.clone().applyAxisAngle(axis1, -angle).applyAxisAngle(axis3, Math.random());
+                    grow(end.clone(), dir2, newLength, depth - 1);
+                    
+                    // Branch 3
+                    const dir3 = direction.clone().applyAxisAngle(axis2, angle).applyAxisAngle(axis3, Math.random());
+                    grow(end.clone(), dir3, newLength, depth - 1);
+                    
+                    // Branch 4
+                    const dir4 = direction.clone().applyAxisAngle(axis2, -angle).applyAxisAngle(axis3, Math.random());
+                    grow(end.clone(), dir4, newLength, depth - 1);
+                }
+                
+                // Start from bottom
+                grow(new THREE.Vector3(0, -radius, 0), new THREE.Vector3(0, 1, 0), radius * 0.8, maxDepth);
+                
+                // Distribute particles along segments
+                const totalLength = segments.reduce((acc, seg) => acc + seg.length, 0);
+                
+                if (segments.length === 0) {
+                    // Fallback
+                    segments.push({
+                        start: new THREE.Vector3(0, -radius, 0),
+                        end: new THREE.Vector3(0, radius, 0),
+                        length: radius * 2
+                    });
+                }
+
+                for (let i = 0; i < count; i++) {
+                    // Select segment weighted by length
+                    let r = Math.random() * totalLength;
+                    let selectedSeg = segments[0];
+                    
+                    for (const seg of segments) {
+                        r -= seg.length;
+                        if (r <= 0) {
+                            selectedSeg = seg;
+                            break;
+                        }
+                    }
+                    
+                    // Random point on segment
+                    const t = Math.random();
+                    const x = selectedSeg.start.x + (selectedSeg.end.x - selectedSeg.start.x) * t;
+                    const y = selectedSeg.start.y + (selectedSeg.end.y - selectedSeg.start.y) * t;
+                    const z = selectedSeg.start.z + (selectedSeg.end.z - selectedSeg.start.z) * t;
+                    
+                    const noise = 0.05;
+                    positions.push({
+                        x: x + (Math.random() - 0.5) * noise,
+                        y: y + (Math.random() - 0.5) * noise,
+                        z: z + (Math.random() - 0.5) * noise
+                    });
+                }
             } else if (shapeType === 'dnahelix') {
                 const helixRadius = radius * 0.5;
                 const height = radius * 3;
@@ -2520,6 +2640,20 @@ Sheep<!DOCTYPE html>
                         z: z + (Math.random() - 0.5) * noise
                     });
                 }
+            } else {
+                // Fallback to sphere for unknown shapes
+                console.warn('Unknown shape type:', shapeType, 'falling back to sphere');
+                const goldenRatio = (1 + Math.sqrt(5)) / 2;
+                for (let i = 0; i < count; i++) {
+                    const theta = 2 * Math.PI * i / goldenRatio;
+                    const phi = Math.acos(1 - 2 * (i + 0.5) / count);
+                    const r = radius + (Math.random() - 0.5) * params.thickness;
+                    positions.push({
+                        x: Math.sin(phi) * Math.cos(theta) * r,
+                        y: Math.sin(phi) * Math.sin(theta) * r,
+                        z: Math.cos(phi) * r
+                    });
+                }
             }
             
             return positions;
@@ -2712,7 +2846,7 @@ Sheep<!DOCTYPE html>
             
             // Main shape particles
             for (let i = 0; i < params.particleCount; i++) {
-                const pos = shapeParticles[i];
+                const pos = shapeParticles[i] || {x: 0, y: 0, z: 0};
                 
                 particlePositions[i * 3] = pos.x;
                 particlePositions[i * 3 + 1] = pos.y;
@@ -4236,7 +4370,7 @@ Sheep<!DOCTYPE html>
                 'sphere', 'tetrahedron', 'cube', 'octahedron', 'dodecahedron', 'icosahedron', 'torus', 
                 'seedoflife', 'vectorequilibrium', 'lotusoflife', 'metatronscube', 'floweroflife', 
                 'merkaba', '64startetrahedron', 'philosopherstone', 'nestedpolygons', 'goldenspiral', 
-                'vesicapiscis', 'yinyang',
+                'vesicapiscis', 'yinyang', 'lsystem',
                 'happyface', 'rubberducky', 'skull', 'dnahelix', 'text'
             ];
             const sprites = ['square', 'circle', 'star', 'triangle', 'diamond', 'heart', 'happyface', 'skull', 'rubberducky'];
@@ -4371,6 +4505,44 @@ Background: ${params.backgroundType.charAt(0).toUpperCase() + params.backgroundT
         
         document.getElementById('randomize').addEventListener('click', randomizeSettings);
         
+        // Resize functionality
+        const resizeHandle = document.getElementById('resize-handle');
+        const controlsPanel = document.getElementById('controls');
+        let isResizing = false;
+        
+        if (resizeHandle && controlsPanel) {
+            resizeHandle.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                e.preventDefault();
+                document.body.style.cursor = 'nwse-resize';
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                
+                const rect = controlsPanel.getBoundingClientRect();
+                const newWidth = e.clientX - rect.left;
+                const newHeight = e.clientY - rect.top;
+                
+                if (newWidth > 300) {
+                    controlsPanel.style.width = newWidth + 'px';
+                    controlsPanel.style.maxWidth = 'none';
+                }
+                
+                if (newHeight > 200) {
+                    controlsPanel.style.height = newHeight + 'px';
+                    controlsPanel.style.maxHeight = 'none';
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    document.body.style.cursor = 'default';
+                }
+            });
+        }
+
         // Reset
         document.getElementById('reset').addEventListener('click', () => {
             params = {
@@ -4423,6 +4595,13 @@ Background: ${params.backgroundType.charAt(0).toUpperCase() + params.backgroundT
         // Initialize
         setTimeout(() => {
             try {
+                if (typeof THREE === 'undefined') {
+                    throw new Error('Three.js library not loaded.');
+                }
+                if (!scene || !renderer) {
+                    throw new Error('Scene or Renderer not initialized.');
+                }
+
                 document.getElementById('loading').classList.add('hidden');
                 updateBackground();
                 createParticleSystem();
@@ -4431,9 +4610,13 @@ Background: ${params.backgroundType.charAt(0).toUpperCase() + params.backgroundT
                 showNotification('🚀 Ultimate Particle Explorer Ready!');
             } catch (error) {
                 console.error('Initialization error:', error);
-                document.getElementById('loading').textContent = 'Error: ' + error.message;
+                const loadingEl = document.getElementById('loading');
+                loadingEl.classList.remove('hidden');
+                loadingEl.innerHTML = 'Init Error: ' + error.message + '<br><br><small>' + (error.stack || '') + '</small>';
+                loadingEl.style.textAlign = 'center';
+                loadingEl.style.maxWidth = '80%';
             }
-        }, 100);
+        }, 500); // Increased delay slightly to ensure DOM is ready
     </script>
 </body>
 </html>
