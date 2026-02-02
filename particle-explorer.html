@@ -1,22 +1,88 @@
-Sheep<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Particle Geometry Explorer</title>
+    <title>Particle Geometry Explorer - Enhanced</title>
     <style>
+        :root {
+            /* Dark theme (default) */
+            --bg-primary: rgba(0, 0, 0, 0.95);
+            --bg-secondary: rgba(20, 20, 30, 0.9);
+            --bg-tertiary: rgba(40, 40, 60, 0.8);
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --text-muted: #666666;
+            --accent-primary: #ff006e;
+            --accent-secondary: #8338ec;
+            --accent-tertiary: #3a86ff;
+            --border-color: rgba(255, 255, 255, 0.2);
+            --success-color: #00ff88;
+            --warning-color: #ffaa00;
+            --error-color: #ff4444;
+            --section-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Light theme */
+        .light-theme {
+            --bg-primary: rgba(255, 255, 255, 0.95);
+            --bg-secondary: rgba(240, 240, 245, 0.95);
+            --bg-tertiary: rgba(220, 220, 230, 0.9);
+            --text-primary: #1a1a2e;
+            --text-secondary: #555555;
+            --text-muted: #888888;
+            --border-color: rgba(0, 0, 0, 0.15);
+            --section-bg: rgba(0, 0, 0, 0.03);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #000;
             overflow: hidden;
             touch-action: none;
+            transition: background 0.3s ease;
+        }
+
+        body.light-theme {
+            background: #f0f0f5;
+        }
+
+        /* Accessibility - Focus styles */
+        *:focus-visible {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent-primary);
+            color: white;
+            padding: 8px 16px;
+            z-index: 10000;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
         }
         
         #canvas-container {
@@ -29,23 +95,494 @@ Sheep<!DOCTYPE html>
             position: fixed;
             top: 10px;
             left: 10px;
-            background: rgba(0, 0, 0, 0.95);
+            background: var(--bg-primary);
             padding: 0;
             border-radius: 12px;
-            color: #fff;
+            color: var(--text-primary);
             font-size: 14px;
             max-width: 360px;
             backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border-color);
             max-height: 90vh;
             z-index: 100;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, background 0.3s ease, transform 0.3s ease;
         }
-        
+
         #controls.collapsed {
             opacity: 0;
             pointer-events: none;
+        }
+
+        /* Search/Filter Bar */
+        #search-container {
+            padding: 8px 15px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #control-search {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        #control-search::placeholder {
+            color: var(--text-muted);
+        }
+
+        #control-search:focus {
+            border-color: var(--accent-primary);
+            outline: none;
+        }
+
+        .search-hidden {
+            display: none !important;
+        }
+
+        /* Collapsible Sections */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 0;
+            user-select: none;
+            transition: color 0.2s;
+        }
+
+        .section-header:hover {
+            color: var(--accent-primary);
+        }
+
+        .section-toggle {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .section-collapsed .section-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .section-collapsed .section-content {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        /* Parameter Lock Icons */
+        .param-lock {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .param-lock:hover {
+            background: var(--bg-tertiary);
+            color: var(--accent-primary);
+        }
+
+        .param-lock.locked {
+            color: var(--warning-color);
+        }
+
+        /* Favorites Section */
+        #favorites-section {
+            background: linear-gradient(135deg, rgba(255, 0, 110, 0.1), rgba(131, 56, 236, 0.1));
+            border: 1px solid rgba(255, 0, 110, 0.3);
+            border-radius: 8px;
+            margin: 10px 15px;
+            padding: 10px;
+        }
+
+        #favorites-section .section-title {
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .favorites-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .favorite-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .favorite-btn:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Undo/Redo Toolbar */
+        #history-toolbar {
+            display: flex;
+            gap: 5px;
+            padding: 5px 15px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-btn {
+            padding: 6px 10px;
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .history-btn:hover:not(:disabled) {
+            background: var(--accent-secondary);
+            border-color: var(--accent-secondary);
+        }
+
+        .history-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Mini-Map */
+        #mini-map {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            z-index: 90;
+            overflow: hidden;
+            display: none;
+        }
+
+        #mini-map.visible {
+            display: block;
+        }
+
+        #mini-map-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .mini-map-label {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        /* Audio Reactivity Panel */
+        #audio-panel {
+            background: var(--section-bg);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        #audio-visualizer {
+            width: 100%;
+            height: 40px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .audio-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        /* Shape Editor Canvas */
+        #shape-editor-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #shape-editor-modal.show {
+            display: flex;
+        }
+
+        #shape-editor-container {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        #shape-editor-canvas {
+            width: 100%;
+            height: 300px;
+            background: #111;
+            border-radius: 8px;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        /* Timeline */
+        #timeline-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-color);
+            z-index: 95;
+            display: none;
+            padding: 10px 20px;
+        }
+
+        #timeline-panel.visible {
+            display: block;
+        }
+
+        #timeline-track {
+            width: 100%;
+            height: 30px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .timeline-keyframe {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+
+        #timeline-playhead {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: var(--accent-tertiary);
+            top: 0;
+            cursor: ew-resize;
+        }
+
+        /* Preset Thumbnails */
+        .preset-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .preset-thumbnail {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            background: var(--bg-tertiary);
+            object-fit: cover;
+        }
+
+        /* Theme Toggle */
+        #theme-toggle {
+            position: fixed;
+            top: 10px;
+            right: 60px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        #theme-toggle:hover {
+            background: var(--accent-primary);
+            transform: scale(1.1);
+        }
+
+        /* Mobile Improvements */
+        @media (max-width: 768px) {
+            #controls {
+                max-width: 100%;
+                width: 100%;
+                left: 0;
+                top: auto;
+                bottom: 0;
+                max-height: 60vh;
+                border-radius: 20px 20px 0 0;
+                transform: translateY(calc(100% - 60px));
+                transition: transform 0.3s ease;
+            }
+
+            #controls.mobile-expanded {
+                transform: translateY(0);
+            }
+
+            #controls.collapsed {
+                transform: translateY(100%);
+            }
+
+            .mobile-handle {
+                display: block;
+                width: 40px;
+                height: 4px;
+                background: var(--text-muted);
+                border-radius: 2px;
+                margin: 0 auto 10px;
+            }
+
+            #drag-handle {
+                border-radius: 20px 20px 0 0;
+                cursor: grab;
+            }
+
+            /* Larger touch targets */
+            input[type="range"] {
+                height: 32px;
+            }
+
+            button, select {
+                min-height: 44px;
+                font-size: 16px;
+            }
+
+            .control-group label {
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-handle {
+                display: none;
+            }
+        }
+
+        /* Visual Feedback Animations */
+        .value-changed {
+            animation: valueFlash 0.3s ease;
+        }
+
+        @keyframes valueFlash {
+            0%, 100% { background: transparent; }
+            50% { background: rgba(255, 0, 110, 0.3); }
+        }
+
+        .control-group input[type="range"]:active + .value-display {
+            color: var(--accent-primary);
+            transform: scale(1.1);
+        }
+
+        /* Smooth transitions for all controls */
+        .control-group input,
+        .control-group select,
+        button {
+            transition: all 0.2s ease;
+        }
+
+        /* Layer Panel */
+        #layer-panel {
+            background: var(--section-bg);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .layer-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            margin-bottom: 4px;
+        }
+
+        .layer-visibility {
+            cursor: pointer;
+        }
+
+        .layer-name {
+            flex: 1;
+            font-size: 12px;
+        }
+
+        /* Physics Mode Indicator */
+        .physics-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: var(--accent-secondary);
+            border-radius: 10px;
+            font-size: 10px;
+            margin-left: 8px;
+        }
+
+        /* URL Share Button */
+        .share-url-btn {
+            background: linear-gradient(135deg, #00b4d8, #0077b6);
+        }
+
+        /* High Contrast Mode */
+        .high-contrast {
+            --text-primary: #ffffff;
+            --text-secondary: #ffffff;
+            --bg-primary: #000000;
+            --accent-primary: #ffff00;
+            --border-color: #ffffff;
         }
         
         #drag-handle {
@@ -1000,14 +1537,84 @@ Sheep<!DOCTYPE html>
         </div>
     </div>
     
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" aria-label="Toggle light/dark theme" title="Toggle Theme">🌙</button>
+
+    <!-- Mini-Map for Camera Navigation -->
+    <div id="mini-map" role="img" aria-label="Camera position overview">
+        <canvas id="mini-map-canvas"></canvas>
+        <span class="mini-map-label">Camera</span>
+    </div>
+
+    <!-- Timeline Panel for Keyframes -->
+    <div id="timeline-panel" role="region" aria-label="Animation timeline">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: var(--text-secondary);">Timeline</span>
+            <div style="display: flex; gap: 8px;">
+                <button class="history-btn" id="timeline-play">▶</button>
+                <button class="history-btn" id="timeline-add-keyframe">+ Key</button>
+                <button class="history-btn" id="timeline-close">✕</button>
+            </div>
+        </div>
+        <div id="timeline-track">
+            <div id="timeline-playhead" style="left: 0;"></div>
+        </div>
+    </div>
+
+    <!-- Shape Editor Modal -->
+    <div id="shape-editor-modal" class="modal" role="dialog" aria-labelledby="shape-editor-title">
+        <div id="shape-editor-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span id="shape-editor-title" class="modal-title">Custom Shape Editor</span>
+                <button class="modal-close" id="close-shape-editor">×</button>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 10px;">Draw your custom shape by clicking/touching points:</p>
+            <canvas id="shape-editor-canvas" width="460" height="300"></canvas>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button id="shape-editor-clear" class="secondary" style="flex: 1;">Clear</button>
+                <button id="shape-editor-apply" class="secondary" style="flex: 1;">Apply Shape</button>
+            </div>
+        </div>
+    </div>
+
     <div id="controls">
         <div id="drag-handle">
+            <div class="mobile-handle"></div>
             <h2><span class="drag-icon">⋮⋮</span> Particle Explorer</h2>
-            <button id="close-controls">✕</button>
+            <button id="close-controls" aria-label="Close control panel">✕</button>
         </div>
+
+        <!-- Search Bar -->
+        <div id="search-container">
+            <input type="text" id="control-search" placeholder="🔍 Search controls..." aria-label="Search controls">
+        </div>
+
+        <!-- Undo/Redo Toolbar -->
+        <div id="history-toolbar">
+            <button class="history-btn" id="undo-btn" disabled title="Undo (Ctrl+Z)">↶ Undo</button>
+            <button class="history-btn" id="redo-btn" disabled title="Redo (Ctrl+Y)">↷ Redo</button>
+            <button class="history-btn" id="timeline-toggle" title="Toggle Timeline">📽 Timeline</button>
+            <button class="history-btn" id="minimap-toggle" title="Toggle Mini-Map">🗺</button>
+        </div>
+
         <div id="controls-content">
+            <!-- Favorites Section -->
+            <div id="favorites-section" role="region" aria-label="Favorite controls">
+                <div class="section-title">⭐ Favorites</div>
+                <div class="favorites-grid" id="favorites-grid">
+                    <button class="favorite-btn" data-action="randomize">🎲 Random</button>
+                    <button class="favorite-btn" data-action="screenshot">📸 Capture</button>
+                    <button class="favorite-btn" data-action="pause">⏸ Pause</button>
+                </div>
+            </div>
+
             <!-- Quick Actions Section -->
-            <div class="section-title">⚡ Quick Actions</div>
+            <div class="control-section" data-section="quick-actions">
+                <div class="section-header" role="button" aria-expanded="true" tabindex="0">
+                    <span class="section-title">⚡ Quick Actions</span>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content">
             
             <div class="button-row">
                 <button id="pausePlayBtn" class="secondary">⏸ Pause (Space)</button>
@@ -1038,10 +1645,58 @@ Sheep<!DOCTYPE html>
             </div>
             
             <button id="help-btn" class="tertiary">❓ Help & Guide</button>
-            
+                </div>
+            </div>
+
+            <!-- Audio Reactivity Section -->
+            <div class="control-section" data-section="audio">
+                <div class="section-header" role="button" aria-expanded="true" tabindex="0">
+                    <span class="section-title">🎵 Audio Reactivity</span>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content">
+                    <div id="audio-panel">
+                        <div class="control-group">
+                            <label>Audio Source</label>
+                            <select id="audioSource">
+                                <option value="none">None</option>
+                                <option value="microphone">Microphone</option>
+                                <option value="file">Audio File</option>
+                            </select>
+                        </div>
+                        <input type="file" id="audioFileInput" accept="audio/*" style="display: none;">
+                        <canvas id="audio-visualizer"></canvas>
+                        <div class="audio-controls">
+                            <div class="control-group" style="flex: 1;">
+                                <label>Sensitivity <span class="value-display" id="audioSensitivityValue">1.0</span></label>
+                                <input type="range" id="audioSensitivity" min="0.1" max="3" value="1" step="0.1">
+                            </div>
+                        </div>
+                        <div class="control-group" style="margin-top: 8px;">
+                            <label>React To:</label>
+                            <div style="display: flex; gap: 10px; margin-top: 5px;">
+                                <label style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                                    <input type="checkbox" id="audioAffectSize" checked> Size
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                                    <input type="checkbox" id="audioAffectColor"> Color
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                                    <input type="checkbox" id="audioAffectSpeed"> Speed
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Particle System Section -->
-            <div class="control-section">
-                <div class="section-title">⬡ Particle System</div>
+            <div class="control-section" data-section="particle-system">
+                <div class="section-header" role="button" aria-expanded="true" tabindex="0">
+                    <span class="section-title">⬡ Particle System</span>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content">
                 
                 <div class="control-group">
                     <label>Shape Type</label>
@@ -1100,14 +1755,75 @@ Sheep<!DOCTYPE html>
                 </div>
                 
                 <div class="control-group">
-                    <label>System Size <span class="value-display" id="radiusValue">3.0</span></label>
+                    <label>System Size <span class="value-display" id="radiusValue">3.0</span>
+                        <button class="param-lock" data-param="radius" title="Lock for randomization">🔓</button>
+                    </label>
                     <input type="range" id="radius" min="1" max="6" value="3" step="0.1">
                 </div>
+
+                <!-- Custom Shape Editor Button -->
+                <button id="open-shape-editor" class="tertiary" style="margin-top: 10px;">✏️ Draw Custom Shape</button>
+
+                <!-- Multi-Layer Controls -->
+                <div id="layer-panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="font-size: 12px;">Shape Layers</label>
+                        <button class="history-btn" id="add-layer-btn" style="padding: 4px 8px; font-size: 11px;">+ Add Layer</button>
+                    </div>
+                    <div id="layers-list">
+                        <div class="layer-item" data-layer="0">
+                            <span class="layer-visibility">👁</span>
+                            <span class="layer-name">Layer 1 (Main)</span>
+                            <span style="font-size: 10px; color: var(--text-muted);">sphere</span>
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
-            
+
+            <!-- Physics Section -->
+            <div class="control-section" data-section="physics">
+                <div class="section-header" role="button" aria-expanded="false" tabindex="0">
+                    <span class="section-title">⚛️ Physics Simulation</span>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content" style="max-height: 0; opacity: 0;">
+                    <div class="control-group">
+                        <label>Physics Mode</label>
+                        <select id="physicsMode">
+                            <option value="none">None</option>
+                            <option value="gravity">Gravity</option>
+                            <option value="flocking">Flocking (Boids)</option>
+                            <option value="magnetic">Magnetic Field</option>
+                            <option value="fluid">Fluid Simulation</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Gravity Strength <span class="value-display" id="gravityStrengthValue">0.5</span></label>
+                        <input type="range" id="gravityStrength" min="0" max="2" value="0.5" step="0.1">
+                    </div>
+                    <div class="control-group">
+                        <label>Collision Detection
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="collisionDetection">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>Damping <span class="value-display" id="dampingValue">0.98</span></label>
+                        <input type="range" id="damping" min="0.9" max="1" value="0.98" step="0.01">
+                    </div>
+                </div>
+            </div>
+
             <!-- Motion & Effects Section -->
-            <div class="control-section">
-                <div class="section-title">✨ Motion & Effects</div>
+            <div class="control-section section-collapsed" data-section="motion">
+                <div class="section-header" role="button" aria-expanded="false" tabindex="0">
+                    <span class="section-title">✨ Motion & Effects</span>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content" style="max-height: 0; opacity: 0;">
                 
                 <div class="control-group">
                     <label>Time Speed <span class="value-display" id="timeSpeedValue">1.0x</span></label>
@@ -1357,21 +2073,38 @@ Sheep<!DOCTYPE html>
             </div>
             
             <!-- Import/Export Section -->
-            <div class="control-section">
-                <div class="section-title">📤 Import / Export</div>
-                
+            <div class="control-section" data-section="export">
+                <div class="section-header" role="button" aria-expanded="true" tabindex="0">
+                    <span class="section-title">📤 Import / Export</span>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content">
                 <div class="button-row">
                     <button id="export-settings" class="secondary">📤 Export Code</button>
                     <button id="import-settings-btn" class="secondary">📥 Import Code</button>
                 </div>
-                
-                <button id="reset" class="tertiary">🔄 Reset All Settings</button>
+
+                <!-- New Export Options -->
+                <div class="button-row" style="margin-top: 10px;">
+                    <button id="export-gif" class="tertiary">🎞️ Export GIF</button>
+                    <button id="share-url" class="tertiary share-url-btn">🔗 Share URL</button>
+                </div>
+                <div class="button-row" style="margin-top: 10px;">
+                    <button id="export-svg" class="tertiary">📐 Export SVG</button>
+                    <button id="export-png-hd" class="tertiary">🖼️ HD Screenshot</button>
+                </div>
+
+                <button id="reset" class="tertiary" style="margin-top: 10px;">🔄 Reset All Settings</button>
+                </div>
             </div>
             
             <!-- Settings & Performance Section -->
-            <div class="control-section">
-                <div class="section-title">⚙️ Settings & Performance</div>
-                
+            <div class="control-section" data-section="settings">
+                <div class="section-header" role="button" aria-expanded="true" tabindex="0">
+                    <span class="section-title">⚙️ Settings & Performance</span>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content">
                 <div class="control-group">
                     <label>Quality Preset</label>
                     <select id="qualityPreset">
@@ -1381,7 +2114,7 @@ Sheep<!DOCTYPE html>
                         <option value="low">Low (Fast)</option>
                     </select>
                 </div>
-                
+
                 <div class="control-group">
                     <label>Show FPS
                         <label class="toggle-switch">
@@ -1390,11 +2123,20 @@ Sheep<!DOCTYPE html>
                         </label>
                     </label>
                 </div>
-                
+
                 <div class="control-group">
                     <label>Show Diagnostics
                         <label class="toggle-switch">
                             <input type="checkbox" id="showDiagnostics">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                </div>
+
+                <div class="control-group">
+                    <label>Show Mini-Map
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="showMiniMap">
                             <span class="slider"></span>
                         </label>
                     </label>
@@ -1408,9 +2150,33 @@ Sheep<!DOCTYPE html>
                         </label>
                     </label>
                 </div>
-                
+
+                <!-- Accessibility Options -->
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                    <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px; display: block;">Accessibility</label>
+
+                    <div class="control-group">
+                        <label>High Contrast Mode
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="highContrast">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Reduce Motion
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="reduceMotion">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="keyboard-hint">
-                    💡 Keyboard Shortcuts: Space: Pause • S: Screenshot • R: Random • C: Reset Camera • M: Lock Camera • D: Diagnostics • F: Fullscreen
+                    💡 Keyboard Shortcuts: Space: Pause • S: Screenshot • R: Random • C: Reset Camera • Ctrl+Z: Undo • Ctrl+Y: Redo • D: Diagnostics • F: Fullscreen
+                </div>
                 </div>
             </div>
         </div>
@@ -1892,7 +2658,31 @@ Sheep<!DOCTYPE html>
         // Generate particle positions
         function generateShapeParticles(shapeType, count, radius) {
             const positions = [];
-            
+
+            // Custom shape from shape editor
+            if (shapeType === 'custom') {
+                const customPoints = JSON.parse(localStorage.getItem('customShape') || '[]');
+                if (customPoints.length > 0) {
+                    for (let i = 0; i < count; i++) {
+                        // Interpolate between custom points
+                        const t = i / count;
+                        const idx = Math.floor(t * customPoints.length);
+                        const nextIdx = (idx + 1) % customPoints.length;
+                        const localT = (t * customPoints.length) - idx;
+
+                        const p1 = customPoints[idx];
+                        const p2 = customPoints[nextIdx];
+
+                        const x = (p1.x + (p2.x - p1.x) * localT) * radius;
+                        const y = (p1.y + (p2.y - p1.y) * localT) * radius;
+                        const z = (Math.random() - 0.5) * 0.2;
+
+                        positions.push({ x, y, z });
+                    }
+                    return positions;
+                }
+            }
+
             if (shapeType === 'sphere') {
                 const goldenRatio = (1 + Math.sqrt(5)) / 2;
                 for (let i = 0; i < count; i++) {
@@ -4230,12 +5020,15 @@ Sheep<!DOCTYPE html>
             document.getElementById('import-modal').classList.add('show');
         });
         
-        // Randomize
+        // Randomize (respects locked parameters)
         function randomizeSettings() {
+            // Save state for undo
+            if (typeof saveToHistory === 'function') saveToHistory();
+
             const shapes = [
-                'sphere', 'tetrahedron', 'cube', 'octahedron', 'dodecahedron', 'icosahedron', 'torus', 
-                'seedoflife', 'vectorequilibrium', 'lotusoflife', 'metatronscube', 'floweroflife', 
-                'merkaba', '64startetrahedron', 'philosopherstone', 'nestedpolygons', 'goldenspiral', 
+                'sphere', 'tetrahedron', 'cube', 'octahedron', 'dodecahedron', 'icosahedron', 'torus',
+                'seedoflife', 'vectorequilibrium', 'lotusoflife', 'metatronscube', 'floweroflife',
+                'merkaba', '64startetrahedron', 'philosopherstone', 'nestedpolygons', 'goldenspiral',
                 'vesicapiscis', 'yinyang',
                 'happyface', 'rubberducky', 'skull', 'dnahelix', 'text'
             ];
@@ -4243,9 +5036,12 @@ Sheep<!DOCTYPE html>
             const effects = ['none', 'pulse', 'wave', 'spiral', 'breathe', 'explode'];
             const palettes = ['default', 'fire', 'ice', 'forest', 'sunset', 'neon', 'gold', 'monochrome'];
             const backgrounds = ['solid', 'gradient', 'stars', 'cyberpunk', 'nebula', 'checkerboard', 'chessboard'];
-            
-            params.shapeType = shapes[Math.floor(Math.random() * shapes.length)];
-            params.spriteType = sprites[Math.floor(Math.random() * sprites.length)];
+
+            // Check locked parameters
+            const locked = typeof lockedParams !== 'undefined' ? lockedParams : new Set();
+
+            if (!locked.has('shapeType')) params.shapeType = shapes[Math.floor(Math.random() * shapes.length)];
+            if (!locked.has('spriteType')) params.spriteType = sprites[Math.floor(Math.random() * sprites.length)];
             
             // Randomize Background if not excluded
             const excludeBackground = document.getElementById('excludeBackgroundFromRandom').checked;
@@ -4260,9 +5056,9 @@ Sheep<!DOCTYPE html>
                 params.customText = texts[Math.floor(Math.random() * texts.length)];
             }
             
-            params.rotationSpeed = Math.random() * 2;
-            params.radius = Math.random() * 4 + 2;
-            params.colorShift = Math.random();
+            if (!locked.has('rotationSpeed')) params.rotationSpeed = Math.random() * 2;
+            if (!locked.has('radius')) params.radius = Math.random() * 4 + 2;
+            if (!locked.has('colorShift')) params.colorShift = Math.random();
             
             // Randomize Effect Type if not excluded
             const excludeEffectType = document.getElementById('excludeEffectTypeFromRandom').checked;
@@ -4420,6 +5216,719 @@ Background: ${params.backgroundType.charAt(0).toUpperCase() + params.backgroundT
             showNotification('🔄 Reset Complete');
         });
         
+        // ==========================================
+        // NEW FEATURES - Enhanced Functionality
+        // ==========================================
+
+        // --- Undo/Redo System ---
+        const historyStack = [];
+        const redoStack = [];
+        const maxHistorySize = 50;
+
+        function saveToHistory() {
+            const state = JSON.stringify(params);
+            if (historyStack.length === 0 || historyStack[historyStack.length - 1] !== state) {
+                historyStack.push(state);
+                if (historyStack.length > maxHistorySize) {
+                    historyStack.shift();
+                }
+                redoStack.length = 0;
+                updateHistoryButtons();
+            }
+        }
+
+        function undo() {
+            if (historyStack.length > 1) {
+                redoStack.push(historyStack.pop());
+                const prevState = JSON.parse(historyStack[historyStack.length - 1]);
+                Object.assign(params, prevState);
+                updateAllControls();
+                createParticleSystem();
+                updateBackground();
+                updateHistoryButtons();
+                showNotification('↶ Undone');
+            }
+        }
+
+        function redo() {
+            if (redoStack.length > 0) {
+                const nextState = JSON.parse(redoStack.pop());
+                historyStack.push(JSON.stringify(nextState));
+                Object.assign(params, nextState);
+                updateAllControls();
+                createParticleSystem();
+                updateBackground();
+                updateHistoryButtons();
+                showNotification('↷ Redone');
+            }
+        }
+
+        function updateHistoryButtons() {
+            document.getElementById('undo-btn').disabled = historyStack.length <= 1;
+            document.getElementById('redo-btn').disabled = redoStack.length === 0;
+        }
+
+        document.getElementById('undo-btn').addEventListener('click', undo);
+        document.getElementById('redo-btn').addEventListener('click', redo);
+
+        // Keyboard shortcuts for undo/redo
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z') {
+                    e.preventDefault();
+                    undo();
+                } else if (e.key === 'y') {
+                    e.preventDefault();
+                    redo();
+                }
+            }
+        });
+
+        // --- Theme Toggle ---
+        let isDarkTheme = true;
+
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            document.body.classList.toggle('light-theme', !isDarkTheme);
+            document.getElementById('theme-toggle').textContent = isDarkTheme ? '🌙' : '☀️';
+            localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+            showNotification(isDarkTheme ? '🌙 Dark Theme' : '☀️ Light Theme');
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'light') {
+            toggleTheme();
+        }
+
+        // --- Search/Filter Controls ---
+        document.getElementById('control-search').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.control-section').forEach(section => {
+                const text = section.textContent.toLowerCase();
+                section.classList.toggle('search-hidden', query && !text.includes(query));
+            });
+        });
+
+        // --- Collapsible Sections ---
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const section = header.parentElement;
+                section.classList.toggle('section-collapsed');
+                const isExpanded = !section.classList.contains('section-collapsed');
+                header.setAttribute('aria-expanded', isExpanded);
+
+                // Save collapsed state
+                const sectionName = section.dataset.section;
+                if (sectionName) {
+                    const collapsedSections = JSON.parse(localStorage.getItem('collapsedSections') || '[]');
+                    if (isExpanded) {
+                        const index = collapsedSections.indexOf(sectionName);
+                        if (index > -1) collapsedSections.splice(index, 1);
+                    } else {
+                        if (!collapsedSections.includes(sectionName)) collapsedSections.push(sectionName);
+                    }
+                    localStorage.setItem('collapsedSections', JSON.stringify(collapsedSections));
+                }
+            });
+
+            // Keyboard navigation
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    header.click();
+                }
+            });
+        });
+
+        // Restore collapsed state
+        const savedCollapsed = JSON.parse(localStorage.getItem('collapsedSections') || '[]');
+        savedCollapsed.forEach(sectionName => {
+            const section = document.querySelector(`[data-section="${sectionName}"]`);
+            if (section) {
+                section.classList.add('section-collapsed');
+                const content = section.querySelector('.section-content');
+                if (content) {
+                    content.style.maxHeight = '0';
+                    content.style.opacity = '0';
+                }
+            }
+        });
+
+        // --- Parameter Locking ---
+        const lockedParams = new Set(JSON.parse(localStorage.getItem('lockedParams') || '[]'));
+
+        document.querySelectorAll('.param-lock').forEach(btn => {
+            const param = btn.dataset.param;
+            if (lockedParams.has(param)) {
+                btn.classList.add('locked');
+                btn.textContent = '🔒';
+            }
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isLocked = lockedParams.has(param);
+                if (isLocked) {
+                    lockedParams.delete(param);
+                    btn.classList.remove('locked');
+                    btn.textContent = '🔓';
+                } else {
+                    lockedParams.add(param);
+                    btn.classList.add('locked');
+                    btn.textContent = '🔒';
+                }
+                localStorage.setItem('lockedParams', JSON.stringify([...lockedParams]));
+            });
+        });
+
+        // --- Favorites System ---
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const action = btn.dataset.action;
+                switch(action) {
+                    case 'randomize': randomizeSettings(); break;
+                    case 'screenshot': takeScreenshot(); break;
+                    case 'pause': handlePauseToggle(); break;
+                }
+            });
+        });
+
+        // --- Mini-Map ---
+        let miniMapCanvas, miniMapCtx;
+
+        function initMiniMap() {
+            miniMapCanvas = document.getElementById('mini-map-canvas');
+            miniMapCtx = miniMapCanvas.getContext('2d');
+            miniMapCanvas.width = 120;
+            miniMapCanvas.height = 120;
+        }
+
+        function updateMiniMap() {
+            if (!miniMapCtx || !document.getElementById('mini-map').classList.contains('visible')) return;
+
+            miniMapCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            miniMapCtx.fillRect(0, 0, 120, 120);
+
+            // Draw grid
+            miniMapCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            miniMapCtx.beginPath();
+            for (let i = 0; i <= 120; i += 20) {
+                miniMapCtx.moveTo(i, 0);
+                miniMapCtx.lineTo(i, 120);
+                miniMapCtx.moveTo(0, i);
+                miniMapCtx.lineTo(120, i);
+            }
+            miniMapCtx.stroke();
+
+            // Draw particle system representation
+            miniMapCtx.fillStyle = 'rgba(131, 56, 236, 0.5)';
+            miniMapCtx.beginPath();
+            miniMapCtx.arc(60, 60, 20, 0, Math.PI * 2);
+            miniMapCtx.fill();
+
+            // Draw camera position
+            const camX = 60 + (camera.position.x / currentZoom) * 30;
+            const camY = 60 - (camera.position.z / currentZoom) * 30;
+            miniMapCtx.fillStyle = '#ff006e';
+            miniMapCtx.beginPath();
+            miniMapCtx.arc(camX, camY, 5, 0, Math.PI * 2);
+            miniMapCtx.fill();
+
+            // Draw direction indicator
+            miniMapCtx.strokeStyle = '#ff006e';
+            miniMapCtx.lineWidth = 2;
+            miniMapCtx.beginPath();
+            miniMapCtx.moveTo(camX, camY);
+            miniMapCtx.lineTo(60, 60);
+            miniMapCtx.stroke();
+        }
+
+        document.getElementById('minimap-toggle').addEventListener('click', () => {
+            const miniMap = document.getElementById('mini-map');
+            miniMap.classList.toggle('visible');
+            document.getElementById('showMiniMap').checked = miniMap.classList.contains('visible');
+        });
+
+        document.getElementById('showMiniMap').addEventListener('change', (e) => {
+            document.getElementById('mini-map').classList.toggle('visible', e.target.checked);
+        });
+
+        // --- Audio Reactivity ---
+        let audioContext, analyser, audioSource, audioDataArray;
+        let audioSensitivity = 1.0;
+        let audioEnabled = false;
+
+        async function initAudio(source) {
+            try {
+                if (audioContext) {
+                    audioContext.close();
+                }
+
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                audioDataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                if (source === 'microphone') {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    audioSource = audioContext.createMediaStreamSource(stream);
+                    audioSource.connect(analyser);
+                    audioEnabled = true;
+                    showNotification('🎤 Microphone connected');
+                } else if (source === 'file') {
+                    document.getElementById('audioFileInput').click();
+                }
+            } catch (err) {
+                console.error('Audio init error:', err);
+                showNotification('❌ Audio access denied');
+                document.getElementById('audioSource').value = 'none';
+            }
+        }
+
+        document.getElementById('audioFileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const audio = new Audio(URL.createObjectURL(file));
+                audio.crossOrigin = 'anonymous';
+                await audio.play();
+                audioSource = audioContext.createMediaElementSource(audio);
+                audioSource.connect(analyser);
+                analyser.connect(audioContext.destination);
+                audioEnabled = true;
+                showNotification('🎵 Audio file loaded');
+            }
+        });
+
+        document.getElementById('audioSource').addEventListener('change', (e) => {
+            const source = e.target.value;
+            if (source === 'none') {
+                audioEnabled = false;
+                if (audioContext) audioContext.close();
+            } else {
+                initAudio(source);
+            }
+        });
+
+        document.getElementById('audioSensitivity').addEventListener('input', (e) => {
+            audioSensitivity = parseFloat(e.target.value);
+            document.getElementById('audioSensitivityValue').textContent = audioSensitivity.toFixed(1);
+        });
+
+        function getAudioLevel() {
+            if (!audioEnabled || !analyser) return 0;
+            analyser.getByteFrequencyData(audioDataArray);
+            const avg = audioDataArray.reduce((a, b) => a + b, 0) / audioDataArray.length;
+            return (avg / 255) * audioSensitivity;
+        }
+
+        function drawAudioVisualizer() {
+            const canvas = document.getElementById('audio-visualizer');
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            ctx.fillStyle = 'rgba(30, 30, 40, 1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (!audioEnabled || !analyser) return;
+
+            analyser.getByteFrequencyData(audioDataArray);
+            const barWidth = canvas.width / audioDataArray.length;
+
+            for (let i = 0; i < audioDataArray.length; i++) {
+                const barHeight = (audioDataArray[i] / 255) * canvas.height;
+                const hue = (i / audioDataArray.length) * 360;
+                ctx.fillStyle = `hsl(${hue}, 80%, 50%)`;
+                ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+            }
+        }
+
+        // --- Shape Editor ---
+        let shapeEditorPoints = [];
+        let shapeEditorCanvas, shapeEditorCtx;
+
+        function initShapeEditor() {
+            shapeEditorCanvas = document.getElementById('shape-editor-canvas');
+            shapeEditorCtx = shapeEditorCanvas.getContext('2d');
+
+            shapeEditorCanvas.addEventListener('click', (e) => {
+                const rect = shapeEditorCanvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width * 2 - 1;
+                const y = -((e.clientY - rect.top) / rect.height * 2 - 1);
+                shapeEditorPoints.push({ x, y, z: 0 });
+                drawShapeEditor();
+            });
+
+            shapeEditorCanvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const rect = shapeEditorCanvas.getBoundingClientRect();
+                const x = (touch.clientX - rect.left) / rect.width * 2 - 1;
+                const y = -((touch.clientY - rect.top) / rect.height * 2 - 1);
+                shapeEditorPoints.push({ x, y, z: 0 });
+                drawShapeEditor();
+            }, { passive: false });
+        }
+
+        function drawShapeEditor() {
+            if (!shapeEditorCtx) return;
+            shapeEditorCtx.fillStyle = '#111';
+            shapeEditorCtx.fillRect(0, 0, 460, 300);
+
+            // Draw grid
+            shapeEditorCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            shapeEditorCtx.beginPath();
+            for (let i = 0; i <= 460; i += 46) {
+                shapeEditorCtx.moveTo(i, 0);
+                shapeEditorCtx.lineTo(i, 300);
+            }
+            for (let i = 0; i <= 300; i += 30) {
+                shapeEditorCtx.moveTo(0, i);
+                shapeEditorCtx.lineTo(460, i);
+            }
+            shapeEditorCtx.stroke();
+
+            // Draw points
+            shapeEditorPoints.forEach((p, i) => {
+                const screenX = (p.x + 1) / 2 * 460;
+                const screenY = (-p.y + 1) / 2 * 300;
+
+                shapeEditorCtx.fillStyle = '#ff006e';
+                shapeEditorCtx.beginPath();
+                shapeEditorCtx.arc(screenX, screenY, 5, 0, Math.PI * 2);
+                shapeEditorCtx.fill();
+
+                // Connect points
+                if (i > 0) {
+                    const prev = shapeEditorPoints[i - 1];
+                    const prevX = (prev.x + 1) / 2 * 460;
+                    const prevY = (-prev.y + 1) / 2 * 300;
+                    shapeEditorCtx.strokeStyle = 'rgba(255, 0, 110, 0.5)';
+                    shapeEditorCtx.lineWidth = 2;
+                    shapeEditorCtx.beginPath();
+                    shapeEditorCtx.moveTo(prevX, prevY);
+                    shapeEditorCtx.lineTo(screenX, screenY);
+                    shapeEditorCtx.stroke();
+                }
+            });
+        }
+
+        document.getElementById('open-shape-editor').addEventListener('click', () => {
+            document.getElementById('shape-editor-modal').classList.add('show');
+            initShapeEditor();
+            drawShapeEditor();
+        });
+
+        document.getElementById('close-shape-editor').addEventListener('click', () => {
+            document.getElementById('shape-editor-modal').classList.remove('show');
+        });
+
+        document.getElementById('shape-editor-clear').addEventListener('click', () => {
+            shapeEditorPoints = [];
+            drawShapeEditor();
+        });
+
+        document.getElementById('shape-editor-apply').addEventListener('click', () => {
+            if (shapeEditorPoints.length < 3) {
+                showNotification('⚠️ Draw at least 3 points');
+                return;
+            }
+            // Store custom shape and apply
+            localStorage.setItem('customShape', JSON.stringify(shapeEditorPoints));
+            params.shapeType = 'custom';
+            createParticleSystem();
+            document.getElementById('shape-editor-modal').classList.remove('show');
+            showNotification('✅ Custom shape applied!');
+        });
+
+        // --- Physics Simulation ---
+        let physicsMode = 'none';
+        let particlePhysics = [];
+
+        document.getElementById('physicsMode').addEventListener('change', (e) => {
+            physicsMode = e.target.value;
+            initPhysics();
+        });
+
+        document.getElementById('gravityStrength').addEventListener('input', (e) => {
+            document.getElementById('gravityStrengthValue').textContent = e.target.value;
+        });
+
+        document.getElementById('damping').addEventListener('input', (e) => {
+            document.getElementById('dampingValue').textContent = e.target.value;
+        });
+
+        function initPhysics() {
+            if (physicsMode === 'none') return;
+            particlePhysics = [];
+            for (let i = 0; i < params.particleCount; i++) {
+                particlePhysics.push({
+                    vx: 0, vy: 0, vz: 0
+                });
+            }
+        }
+
+        function applyPhysics(positions) {
+            if (physicsMode === 'none' || particlePhysics.length === 0) return;
+
+            const gravity = parseFloat(document.getElementById('gravityStrength').value);
+            const damping = parseFloat(document.getElementById('damping').value);
+
+            for (let i = 0; i < params.particleCount; i++) {
+                const idx = i * 3;
+                const physics = particlePhysics[i];
+
+                if (physicsMode === 'gravity') {
+                    physics.vy -= gravity * 0.001;
+                } else if (physicsMode === 'flocking') {
+                    // Simple flocking behavior
+                    const centerX = 0, centerY = 0, centerZ = 0;
+                    physics.vx += (centerX - positions[idx]) * 0.0001;
+                    physics.vy += (centerY - positions[idx + 1]) * 0.0001;
+                    physics.vz += (centerZ - positions[idx + 2]) * 0.0001;
+                } else if (physicsMode === 'magnetic') {
+                    const dist = Math.sqrt(positions[idx]**2 + positions[idx+1]**2 + positions[idx+2]**2);
+                    if (dist > 0.1) {
+                        physics.vx -= (positions[idx] / dist) * 0.001 * gravity;
+                        physics.vy -= (positions[idx+1] / dist) * 0.001 * gravity;
+                        physics.vz -= (positions[idx+2] / dist) * 0.001 * gravity;
+                    }
+                }
+
+                physics.vx *= damping;
+                physics.vy *= damping;
+                physics.vz *= damping;
+
+                positions[idx] += physics.vx;
+                positions[idx + 1] += physics.vy;
+                positions[idx + 2] += physics.vz;
+            }
+        }
+
+        // --- Timeline/Keyframes ---
+        let keyframes = [];
+        let timelinePosition = 0;
+        let isTimelinePlaying = false;
+
+        document.getElementById('timeline-toggle').addEventListener('click', () => {
+            document.getElementById('timeline-panel').classList.toggle('visible');
+        });
+
+        document.getElementById('timeline-close').addEventListener('click', () => {
+            document.getElementById('timeline-panel').classList.remove('visible');
+        });
+
+        document.getElementById('timeline-add-keyframe').addEventListener('click', () => {
+            keyframes.push({
+                position: timelinePosition,
+                params: JSON.parse(JSON.stringify(params))
+            });
+            updateTimelineDisplay();
+            showNotification('🎬 Keyframe added');
+        });
+
+        document.getElementById('timeline-play').addEventListener('click', () => {
+            isTimelinePlaying = !isTimelinePlaying;
+            document.getElementById('timeline-play').textContent = isTimelinePlaying ? '⏸' : '▶';
+        });
+
+        document.getElementById('timeline-track').addEventListener('click', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            timelinePosition = (e.clientX - rect.left) / rect.width;
+            document.getElementById('timeline-playhead').style.left = (timelinePosition * 100) + '%';
+        });
+
+        function updateTimelineDisplay() {
+            const track = document.getElementById('timeline-track');
+            // Remove old keyframes
+            track.querySelectorAll('.timeline-keyframe').forEach(el => el.remove());
+            // Add keyframes
+            keyframes.forEach((kf, i) => {
+                const marker = document.createElement('div');
+                marker.className = 'timeline-keyframe';
+                marker.style.left = (kf.position * 100) + '%';
+                marker.title = `Keyframe ${i + 1}`;
+                track.appendChild(marker);
+            });
+        }
+
+        // --- Export Functions ---
+        document.getElementById('share-url').addEventListener('click', () => {
+            const settings = btoa(JSON.stringify(params));
+            const url = window.location.href.split('?')[0] + '?config=' + settings;
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification('🔗 URL copied to clipboard!');
+            });
+        });
+
+        document.getElementById('export-png-hd').addEventListener('click', () => {
+            // Render at higher resolution
+            const originalWidth = renderer.domElement.width;
+            const originalHeight = renderer.domElement.height;
+            renderer.setSize(1920, 1080);
+            renderer.render(scene, camera);
+
+            const link = document.createElement('a');
+            link.download = `particle-explorer-hd-${Date.now()}.png`;
+            link.href = renderer.domElement.toDataURL('image/png');
+            link.click();
+
+            renderer.setSize(originalWidth, originalHeight);
+            showNotification('🖼️ HD Screenshot saved!');
+        });
+
+        document.getElementById('export-gif').addEventListener('click', () => {
+            showNotification('🎞️ GIF export coming soon!');
+        });
+
+        document.getElementById('export-svg').addEventListener('click', () => {
+            // Generate SVG of particle positions
+            const positions = particleGeometry.attributes.position.array;
+            let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 20 20" width="800" height="800">`;
+            svgContent += `<rect x="-10" y="-10" width="20" height="20" fill="#000"/>`;
+
+            for (let i = 0; i < Math.min(params.particleCount, 1000); i++) {
+                const x = positions[i * 3];
+                const y = positions[i * 3 + 1];
+                svgContent += `<circle cx="${x}" cy="${-y}" r="0.05" fill="#ff006e" opacity="0.8"/>`;
+            }
+
+            svgContent += '</svg>';
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const link = document.createElement('a');
+            link.download = `particle-explorer-${Date.now()}.svg`;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            showNotification('📐 SVG exported!');
+        });
+
+        // --- Multi-Layer System ---
+        let shapeLayers = [{ shape: 'sphere', visible: true, params: {} }];
+
+        document.getElementById('add-layer-btn').addEventListener('click', () => {
+            if (shapeLayers.length >= 5) {
+                showNotification('⚠️ Maximum 5 layers');
+                return;
+            }
+            shapeLayers.push({ shape: params.shapeType, visible: true, params: { ...params } });
+            updateLayersDisplay();
+            showNotification('✅ Layer added');
+        });
+
+        function updateLayersDisplay() {
+            const list = document.getElementById('layers-list');
+            list.innerHTML = shapeLayers.map((layer, i) => `
+                <div class="layer-item" data-layer="${i}">
+                    <span class="layer-visibility" onclick="toggleLayerVisibility(${i})">${layer.visible ? '👁' : '👁‍🗨'}</span>
+                    <span class="layer-name">Layer ${i + 1}</span>
+                    <span style="font-size: 10px; color: var(--text-muted);">${layer.shape}</span>
+                    ${i > 0 ? `<button onclick="removeLayer(${i})" style="background: none; border: none; color: var(--error-color); cursor: pointer;">✕</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        window.toggleLayerVisibility = function(index) {
+            shapeLayers[index].visible = !shapeLayers[index].visible;
+            updateLayersDisplay();
+            createParticleSystem();
+        };
+
+        window.removeLayer = function(index) {
+            shapeLayers.splice(index, 1);
+            updateLayersDisplay();
+            createParticleSystem();
+        };
+
+        // --- Accessibility ---
+        document.getElementById('highContrast').addEventListener('change', (e) => {
+            document.body.classList.toggle('high-contrast', e.target.checked);
+        });
+
+        document.getElementById('reduceMotion').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                params.rotationSpeed = 0;
+                params.timeSpeed = 0;
+                updateAllControls();
+            }
+        });
+
+        // --- Mobile Improvements ---
+        if (window.innerWidth <= 768) {
+            const controls = document.getElementById('controls');
+            let touchStartY = 0;
+
+            document.getElementById('drag-handle').addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+            });
+
+            document.getElementById('drag-handle').addEventListener('touchmove', (e) => {
+                const deltaY = e.touches[0].clientY - touchStartY;
+                if (deltaY < -50) {
+                    controls.classList.add('mobile-expanded');
+                } else if (deltaY > 50) {
+                    controls.classList.remove('mobile-expanded');
+                }
+            });
+        }
+
+        // --- Load URL Config ---
+        function loadUrlConfig() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const config = urlParams.get('config');
+            if (config) {
+                try {
+                    const settings = JSON.parse(atob(config));
+                    Object.assign(params, settings);
+                    updateAllControls();
+                    showNotification('✅ Loaded shared configuration!');
+                } catch (e) {
+                    console.error('Invalid config:', e);
+                }
+            }
+        }
+
+        // --- Enhanced Animation Loop ---
+        const originalAnimate = animate;
+
+        // Wrap animate with new features
+        const enhancedAnimateSetup = () => {
+            setInterval(() => {
+                updateMiniMap();
+                drawAudioVisualizer();
+
+                // Audio reactivity
+                if (audioEnabled) {
+                    const level = getAudioLevel();
+                    if (document.getElementById('audioAffectSize').checked) {
+                        if (particleMaterial) {
+                            particleMaterial.size = 0.1 + level * 0.2;
+                        }
+                    }
+                    if (document.getElementById('audioAffectSpeed').checked) {
+                        // Temporarily boost speed based on audio
+                    }
+                }
+
+                // Timeline playback
+                if (isTimelinePlaying && keyframes.length > 0) {
+                    timelinePosition += 0.001;
+                    if (timelinePosition > 1) timelinePosition = 0;
+                    document.getElementById('timeline-playhead').style.left = (timelinePosition * 100) + '%';
+                }
+            }, 50);
+        };
+
+        // --- Initialize New Features ---
+        function initNewFeatures() {
+            initMiniMap();
+            initShapeEditor();
+            saveToHistory(); // Save initial state
+            loadUrlConfig();
+            enhancedAnimateSetup();
+            updateLayersDisplay();
+        }
+
         // Initialize
         setTimeout(() => {
             try {
@@ -4427,8 +5936,9 @@ Background: ${params.backgroundType.charAt(0).toUpperCase() + params.backgroundT
                 updateBackground();
                 createParticleSystem();
                 updatePresetList();
+                initNewFeatures();
                 animate();
-                showNotification('🚀 Ultimate Particle Explorer Ready!');
+                showNotification('🚀 Enhanced Particle Explorer Ready!');
             } catch (error) {
                 console.error('Initialization error:', error);
                 document.getElementById('loading').textContent = 'Error: ' + error.message;
