@@ -29,7 +29,7 @@ Sheep<!DOCTYPE html>
             position: fixed;
             top: 10px;
             left: 10px;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(18, 18, 24, 0.92);
             padding: 0;
             border-radius: 12px;
             color: #fff;
@@ -49,7 +49,7 @@ Sheep<!DOCTYPE html>
         }
         
         #drag-handle {
-            background: linear-gradient(135deg, #ff006e, #8338ec);
+            background: #6366f1;
             padding: 12px 15px;
             border-radius: 12px 12px 0 0;
             cursor: move;
@@ -102,7 +102,7 @@ Sheep<!DOCTYPE html>
         }
         
         #controls-content {
-            padding: 15px;
+            padding: 12px;
             max-height: calc(90vh - 52px);
             overflow-y: auto;
             overflow-x: hidden;
@@ -130,7 +130,7 @@ Sheep<!DOCTYPE html>
             position: fixed;
             top: 15px;
             left: 10px;
-            background: rgba(255, 0, 110, 0.9);
+            background: rgba(99, 102, 241, 0.9);
             border: none;
             color: white;
             padding: 12px 16px;
@@ -139,7 +139,7 @@ Sheep<!DOCTYPE html>
             font-size: 18px;
             z-index: 99;
             transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(255, 0, 110, 0.4);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
             opacity: 0;
             pointer-events: none;
         }
@@ -166,22 +166,48 @@ Sheep<!DOCTYPE html>
         }
         
         .control-group {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
-        
+
         .control-section {
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
-            margin-top: 15px;
+            padding-top: 12px;
+            margin-top: 12px;
         }
-        
+
         .section-title {
             font-size: 12px;
-            color: #ff006e;
+            color: #6366f1;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 12px;
             font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        .section-title::after {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-right: 2px solid #6366f1;
+            border-bottom: 2px solid #6366f1;
+            transform: rotate(45deg);
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+
+        .control-section.collapsed .section-title::after {
+            transform: rotate(-45deg);
+        }
+
+        .control-section.collapsed .section-content {
+            display: none;
         }
         
         label {
@@ -204,22 +230,22 @@ Sheep<!DOCTYPE html>
         
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #ff006e;
+            width: 14px;
+            height: 14px;
+            background: #6366f1;
             cursor: pointer;
             border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(255, 0, 110, 0.5);
+            box-shadow: 0 1px 4px rgba(99, 102, 241, 0.4);
         }
-        
+
         input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #ff006e;
+            width: 14px;
+            height: 14px;
+            background: #6366f1;
             cursor: pointer;
             border-radius: 50%;
             border: none;
-            box-shadow: 0 2px 8px rgba(255, 0, 110, 0.5);
+            box-shadow: 0 1px 4px rgba(99, 102, 241, 0.4);
         }
         
         select, input[type="text"] {
@@ -237,7 +263,12 @@ Sheep<!DOCTYPE html>
         input[type="text"] {
             cursor: text;
         }
-        
+
+        select:focus, input[type="text"]:focus, textarea:focus {
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
         select option {
             background: #1a1a1a;
             color: white;
@@ -246,14 +277,14 @@ Sheep<!DOCTYPE html>
         .value-display {
             display: inline-block;
             float: right;
-            color: #ff006e;
+            color: #6366f1;
             font-weight: bold;
         }
-        
+
         button {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #ff006e, #8338ec);
+            background: #6366f1;
             border: none;
             border-radius: 8px;
             color: white;
@@ -262,15 +293,16 @@ Sheep<!DOCTYPE html>
             margin-top: 10px;
             transition: transform 0.2s;
             font-size: 14px;
-            box-shadow: 0 4px 12px rgba(131, 56, 236, 0.4);
+            box-shadow: none;
         }
-        
+
         button:active {
             transform: scale(0.95);
         }
-        
+
         button.secondary {
-            background: linear-gradient(135deg, #3a86ff, #06ffa5);
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
         }
         
         button.tertiary {
@@ -350,7 +382,7 @@ Sheep<!DOCTYPE html>
         }
         
         input:checked + .slider {
-            background-color: #ff006e;
+            background-color: #6366f1;
         }
         
         input:checked + .slider:before {
@@ -425,7 +457,7 @@ Sheep<!DOCTYPE html>
         }
         
         .diagnostics-title {
-            color: #ff006e;
+            color: #6366f1;
             font-weight: bold;
             font-size: 10px;
             text-transform: uppercase;
@@ -462,7 +494,7 @@ Sheep<!DOCTYPE html>
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(18, 18, 24, 0.95);
             padding: 15px 25px;
             border-radius: 12px;
             color: white;
@@ -471,8 +503,9 @@ Sheep<!DOCTYPE html>
             pointer-events: none;
             transition: opacity 0.3s;
             z-index: 1000;
-            border: 2px solid #ff006e;
-            box-shadow: 0 8px 32px rgba(255, 0, 110, 0.5);
+            border: none;
+            border-left: 3px solid #6366f1;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
             max-width: 400px;
             text-align: center;
             white-space: pre-wrap;
@@ -586,7 +619,7 @@ Sheep<!DOCTYPE html>
         }
         
         #fullscreen-btn:hover {
-            background: rgba(255, 0, 110, 0.9);
+            background: rgba(99, 102, 241, 0.9);
             transform: scale(1.1);
         }
         
@@ -621,7 +654,7 @@ Sheep<!DOCTYPE html>
             font-size: 20px;
             font-weight: bold;
             margin-bottom: 20px;
-            color: #ff006e;
+            color: #6366f1;
         }
         
         .modal-close {
@@ -670,13 +703,13 @@ Sheep<!DOCTYPE html>
             }
             
             input[type="range"]::-webkit-slider-thumb {
-                width: 24px;
-                height: 24px;
+                width: 18px;
+                height: 18px;
             }
-            
+
             input[type="range"]::-moz-range-thumb {
-                width: 24px;
-                height: 24px;
+                width: 18px;
+                height: 18px;
             }
             
             #info {
@@ -902,7 +935,7 @@ Sheep<!DOCTYPE html>
             <div class="modal-title">Export Settings</div>
             <p style="color: #888; font-size: 13px; margin-bottom: 15px;">Copy this code to save your current configuration:</p>
             <textarea id="export-code" readonly></textarea>
-            <button onclick="copyExportCode()" style="margin-top: 10px;">📋 Copy to Clipboard</button>
+            <button onclick="copyExportCode()" style="margin-top: 10px;">Copy to Clipboard</button>
         </div>
     </div>
     
@@ -913,7 +946,7 @@ Sheep<!DOCTYPE html>
             <div class="modal-title">Import Settings</div>
             <p style="color: #888; font-size: 13px; margin-bottom: 15px;">Paste a settings code to load a configuration:</p>
             <textarea id="import-code" placeholder="Paste settings code here..."></textarea>
-            <button onclick="importSettings()" style="margin-top: 10px;">📥 Import</button>
+            <button onclick="importSettings()" style="margin-top: 10px;">Import</button>
         </div>
     </div>
     
@@ -921,13 +954,13 @@ Sheep<!DOCTYPE html>
     <div id="help-modal" class="modal">
         <div class="modal-content" style="max-width: 700px; max-height: 85vh; overflow-y: auto;">
             <span class="modal-close" id="close-help-modal">×</span>
-            <div class="modal-title">🎓 Particle Explorer Guide</div>
-            
+            <div class="modal-title">Particle Explorer Guide</div>
+
             <div style="color: #ccc; font-size: 14px; line-height: 1.8;">
-                <h3 style="color: #ff006e; margin-top: 15px; margin-bottom: 10px;">⚡ Quick Start</h3>
+                <h3 style="color: #6366f1; margin-top: 15px; margin-bottom: 10px;">Quick Start</h3>
                 <p>Use the <strong>Quick Actions</strong> at the top for instant control. Try the <strong>Random</strong> button to explore different configurations!</p>
-                
-                <h3 style="color: #ff006e; margin-top: 20px; margin-bottom: 10px;">🖱️ Camera Controls</h3>
+
+                <h3 style="color: #6366f1; margin-top: 20px; margin-bottom: 10px;">Camera Controls</h3>
                 <ul style="margin-left: 20px;">
                     <li><strong>Left Click + Drag:</strong> Rotate camera around particles</li>
                     <li><strong>Right Click + Drag:</strong> Pan camera in 3D space</li>
@@ -938,7 +971,7 @@ Sheep<!DOCTYPE html>
                     <li><strong>3 Finger Drag:</strong> Pan on mobile</li>
                 </ul>
                 
-                <h3 style="color: #ff006e; margin-top: 20px; margin-bottom: 10px;">⌨️ Keyboard Shortcuts</h3>
+                <h3 style="color: #6366f1; margin-top: 20px; margin-bottom: 10px;">Keyboard Shortcuts</h3>
                 <ul style="margin-left: 20px;">
                     <li><strong>Space:</strong> Pause/Play animation</li>
                     <li><strong>S:</strong> Take screenshot</li>
@@ -950,7 +983,7 @@ Sheep<!DOCTYPE html>
                     <li><strong>F:</strong> Toggle fullscreen</li>
                 </ul>
                 
-                <h3 style="color: #ff006e; margin-top: 20px; margin-bottom: 10px;">🎨 Getting Started</h3>
+                <h3 style="color: #6366f1; margin-top: 20px; margin-bottom: 10px;">Getting Started</h3>
                 <ol style="margin-left: 20px;">
                     <li>Choose a <strong>Shape Type</strong> (Sphere, Platonic Solids, Custom Text, etc.)</li>
                     <li>Adjust <strong>Particle Count</strong> for density</li>
@@ -960,15 +993,15 @@ Sheep<!DOCTYPE html>
                     <li>Fine-tune with <strong>Motion & Effects</strong> controls</li>
                 </ol>
                 
-                <h3 style="color: #ff006e; margin-top: 20px; margin-bottom: 10px;">🌀 Orbital Presets</h3>
+                <h3 style="color: #6366f1; margin-top: 20px; margin-bottom: 10px;">Orbital Presets</h3>
                 <p>Try the quick presets for instant configurations:</p>
                 <ul style="margin-left: 20px;">
-                    <li><strong>⚛️ Atom:</strong> Electrons orbiting a nucleus</li>
-                    <li><strong>🌍 Solar:</strong> Planetary system simulation</li>
-                    <li><strong>🌌 Galaxy:</strong> Spiral galaxy formation</li>
+                    <li><strong>Atom:</strong> Electrons orbiting a nucleus</li>
+                    <li><strong>Solar:</strong> Planetary system simulation</li>
+                    <li><strong>Galaxy:</strong> Spiral galaxy formation</li>
                 </ul>
                 
-                <h3 style="color: #ff006e; margin-top: 20px; margin-bottom: 10px;">💾 Saving & Sharing</h3>
+                <h3 style="color: #6366f1; margin-top: 20px; margin-bottom: 10px;">Saving & Sharing</h3>
                 <ul style="margin-left: 20px;">
                     <li><strong>Save Preset:</strong> Name and save your configuration</li>
                     <li><strong>Export Code:</strong> Get shareable settings code</li>
@@ -976,7 +1009,7 @@ Sheep<!DOCTYPE html>
                     <li><strong>Screenshot:</strong> Capture your masterpiece</li>
                 </ul>
                 
-                <h3 style="color: #ff006e; margin-top: 20px; margin-bottom: 10px;">⚙️ Performance Tips</h3>
+                <h3 style="color: #6366f1; margin-top: 20px; margin-bottom: 10px;">Performance Tips</h3>
                 <ul style="margin-left: 20px;">
                     <li>Lower <strong>Quality Preset</strong> if FPS is low</li>
                     <li>Reduce <strong>Particle Count</strong> for better performance</li>
@@ -984,7 +1017,7 @@ Sheep<!DOCTYPE html>
                     <li>Use <strong>Diagnostics</strong> to monitor FPS</li>
                 </ul>
                 
-                <h3 style="color: #ff006e; margin-top: 20px; margin-bottom: 10px;">✨ Pro Tips</h3>
+                <h3 style="color: #6366f1; margin-top: 20px; margin-bottom: 10px;">Pro Tips</h3>
                 <ul style="margin-left: 20px;">
                     <li>Lock camera (M) to prevent accidental movement</li>
                     <li>Use Auto-Orbit Camera for automatic cinematic views</li>
@@ -994,7 +1027,7 @@ Sheep<!DOCTYPE html>
                     <li>Mouse interaction modes add real-time interactivity</li>
                 </ul>
                 
-                <p style="margin-top: 25px; padding: 15px; background: rgba(255,0,110,0.1); border-radius: 8px; border-left: 3px solid #ff006e;">
+                <p style="margin-top: 25px; padding: 15px; background: rgba(99,102,241,0.08); border-radius: 8px; border-left: 3px solid #6366f1;">
                     <strong>Need more help?</strong> Experiment with controls and use the diagnostics panel (D key) to see technical details in real-time.
                 </p>
             </div>
@@ -1008,42 +1041,45 @@ Sheep<!DOCTYPE html>
         </div>
         <div id="controls-content">
             <!-- Quick Actions Section -->
-            <div class="section-title">⚡ Quick Actions</div>
-            
-            <div class="button-row">
-                <button id="pausePlayBtn" class="secondary">⏸ Pause (Space)</button>
-                <button id="randomize" class="secondary">🎲 Random (R)</button>
-            </div>
-            
-            <div class="button-row">
-                <button id="screenshot" class="tertiary">📸 Screenshot (S)</button>
-                <button id="recordVideoBtn" class="tertiary">🎥 Record Video (V)</button>
-            </div>
-            
-            <div class="control-group" style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;">
-                <label for="includeUiInVideo" style="margin-bottom: 0; cursor: pointer;">Include UI in Video</label>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="includeUiInVideo">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="param-group">
-                <label for="demoModeBtn">🎬 Demo Mode:</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <button id="demoModeBtn" class="tertiary" style="flex: 1;">▶️ Start Demo</button>
-                    <input type="number" id="demoInterval" min="1" max="5" step="1" value="3" style="width: 60px; text-align: center;">
-                    <span style="color: #888; font-size: 12px;">sec</span>
+            <div class="control-section" style="border-top: none; padding-top: 0; margin-top: 0;">
+                <div class="section-title">Quick Actions</div>
+                <div class="section-content">
+                    <div class="button-row">
+                        <button id="pausePlayBtn" class="secondary">Pause (Space)</button>
+                        <button id="randomize" class="secondary">Random (R)</button>
+                    </div>
+
+                    <div class="button-row">
+                        <button id="screenshot" class="tertiary">Screenshot (S)</button>
+                        <button id="recordVideoBtn" class="tertiary">Record Video (V)</button>
+                    </div>
+
+                    <div class="control-group" style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;">
+                        <label for="includeUiInVideo" style="margin-bottom: 0; cursor: pointer;">Include UI in Video</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="includeUiInVideo">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="param-group">
+                        <label for="demoModeBtn">Demo Mode:</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button id="demoModeBtn" class="tertiary" style="flex: 1;">Start Demo</button>
+                            <input type="number" id="demoInterval" min="1" max="5" step="1" value="3" style="width: 60px; text-align: center;">
+                            <span style="color: #888; font-size: 12px;">sec</span>
+                        </div>
+                        <div id="demoTimer" style="color: #888; font-size: 12px; margin-top: 5px; display: none;">Next: <span id="demoCountdown">3</span>s</div>
+                    </div>
+
+                    <button id="help-btn" class="tertiary">Help & Guide</button>
                 </div>
-                <div id="demoTimer" style="color: #888; font-size: 12px; margin-top: 5px; display: none;">Next: <span id="demoCountdown">3</span>s</div>
             </div>
-            
-            <button id="help-btn" class="tertiary">❓ Help & Guide</button>
             
             <!-- Particle System Section -->
             <div class="control-section">
-                <div class="section-title">⬡ Particle System</div>
-                
+                <div class="section-title">Particle System</div>
+                <div class="section-content">
                 <div class="control-group">
                     <label>Shape Type</label>
                     <select id="shapeType">
@@ -1052,7 +1088,7 @@ Sheep<!DOCTYPE html>
                         <option value="cube">Cube</option>
                         <option value="octahedron">Octahedron</option>
                         <option value="dodecahedron">Dodecahedron</option>
-                        <option value="icosahedron">Icosahedron</option>
+                        <option value="icosahedron" selected>Icosahedron</option>
                         <option value="torus">Torus</option>
                         <option value="seedoflife">Seed of Life</option>
                         <option value="vectorequilibrium">Vector Equilibrium</option>
@@ -1066,27 +1102,27 @@ Sheep<!DOCTYPE html>
                         <option value="goldenspiral">Golden Spiral</option>
                         <option value="vesicapiscis">Vesica Piscis Chain</option>
                         <option value="yinyang">Yin Yang Sacred</option>
-                        <option value="happyface">😊 Happy Face</option>
-                        <option value="rubberducky">🦦 Rubber Ducky</option>
-                        <option value="skull">☠️ Skull & Crossbones</option>
-                        <option value="dnahelix">🧬 DNA Helix</option>
+                        <option value="happyface">Happy Face</option>
+                        <option value="rubberducky">Rubber Ducky</option>
+                        <option value="skull">Skull & Crossbones</option>
+                        <option value="dnahelix">DNA Helix</option>
                         <option value="mobiusstrip">Möbius Strip</option>
                         <option value="kleinbottle">Klein Bottle</option>
-                        <option value="text">✉️ Custom Text</option>
+                        <option value="text">Custom Text</option>
                     </select>
-                    <div class="shape-preview" id="shapeInfo">Perfect sphere distribution</div>
+                    <div class="shape-preview" id="shapeInfo">20 faces, 12 vertices</div>
                 </div>
 
                 <div class="control-group">
                     <label>Sprite Type</label>
                     <select id="spriteType">
                         <option value="square">Square</option>
-                        <option value="circle">Circle</option>
+                        <option value="circle" selected>Circle</option>
                         <option value="star">Star</option>
                         <option value="triangle">Triangle</option>
                         <option value="diamond">Diamond</option>
                         <option value="heart">Heart</option>
-                        <option value="happyface" selected>Happy Face (Default)</option>
+                        <option value="happyface">Happy Face</option>
                         <option value="skull">Skull</option>
                         <option value="rubberducky">Rubber Ducky</option>
                     </select>
@@ -1098,19 +1134,21 @@ Sheep<!DOCTYPE html>
                 </div>
             
                 <div class="control-group">
-                    <label>Particle Count <span class="value-display" id="particleCountValue">3000</span></label>
-                    <input type="range" id="particleCount" min="500" max="10000" value="3000" step="250">
+                    <label>Particle Count <span class="value-display" id="particleCountValue">4000</span></label>
+                    <input type="range" id="particleCount" min="500" max="10000" value="4000" step="250">
                 </div>
                 
                 <div class="control-group">
                     <label>System Size <span class="value-display" id="radiusValue">3.0</span></label>
                     <input type="range" id="radius" min="1" max="6" value="3" step="0.1">
                 </div>
+                </div>
             </div>
-            
+
             <!-- Motion & Effects Section -->
-            <div class="control-section">
-                <div class="section-title">✨ Motion & Effects</div>
+            <div class="control-section collapsed">
+                <div class="section-title">Motion & Effects</div>
+                <div class="section-content">
                 
                 <div class="control-group">
                     <label>Time Speed <span class="value-display" id="timeSpeedValue">1.0x</span></label>
@@ -1128,8 +1166,8 @@ Sheep<!DOCTYPE html>
                 </div>
                 
                 <div class="control-group">
-                    <label>Rotation Speed <span class="value-display" id="rotationSpeedValue">1.0</span></label>
-                    <input type="range" id="rotationSpeed" min="0" max="3" value="1" step="0.1">
+                    <label>Rotation Speed <span class="value-display" id="rotationSpeedValue">0.6</span></label>
+                    <input type="range" id="rotationSpeed" min="0" max="3" value="0.6" step="0.1">
                 </div>
                 
                 <div class="control-group">
@@ -1139,7 +1177,7 @@ Sheep<!DOCTYPE html>
                         <option value="pulse">Pulse</option>
                         <option value="wave">Wave</option>
                         <option value="spiral">Spiral</option>
-                        <option value="breathe">Breathe</option>
+                        <option value="breathe" selected>Breathe</option>
                         <option value="explode">Explode</option>
                     </select>
                     <div style="margin-top: 5px; display: flex; align-items: center;">
@@ -1149,8 +1187,8 @@ Sheep<!DOCTYPE html>
                 </div>
                 
                 <div class="control-group">
-                    <label>Effect Speed <span class="value-display" id="effectSpeedValue">1.0x</span></label>
-                    <input type="range" id="effectSpeed" min="0.1" max="5" value="1" step="0.1">
+                    <label>Effect Speed <span class="value-display" id="effectSpeedValue">0.8x</span></label>
+                    <input type="range" id="effectSpeed" min="0.1" max="5" value="0.8" step="0.1">
                 </div>
                 
                 <div class="control-group">
@@ -1166,41 +1204,42 @@ Sheep<!DOCTYPE html>
                         </label>
                     </label>
                 </div>
+                </div>
             </div>
 
             <!-- Orbital Rings Section -->
-            <div class="control-section">
-                <div class="section-title">🌀 Orbital Rings</div>
-                
+            <div class="control-section collapsed">
+                <div class="section-title">Orbital Rings</div>
+                <div class="section-content">
                 <div class="control-group checkbox-group" style="margin-bottom: 15px;">
                     <input type="checkbox" id="excludeOrbitalsFromDemo" checked>
                     <label for="excludeOrbitalsFromDemo" style="display: inline; margin-left: 8px; font-size: 0.9em; color: #aaa;">Exclude from Demo Randomization</label>
                 </div>
 
                 <div class="button-row-3">
-                    <button class="tertiary" id="preset-atom">⚛️ Atom</button>
-                    <button class="tertiary" id="preset-solar">🌍 Solar</button>
-                    <button class="tertiary" id="preset-galaxy">🌌 Galaxy</button>
+                    <button class="tertiary" id="preset-atom">Atom</button>
+                    <button class="tertiary" id="preset-solar">Solar</button>
+                    <button class="tertiary" id="preset-galaxy">Galaxy</button>
                 </div>
                 
                 <div class="control-group">
-                    <label>Number of Rings <span class="value-display" id="numOrbitalsValue">1</span></label>
-                    <input type="range" id="numOrbitals" min="0" max="5" value="1" step="1">
+                    <label>Number of Rings <span class="value-display" id="numOrbitalsValue">3</span></label>
+                    <input type="range" id="numOrbitals" min="0" max="5" value="3" step="1">
                 </div>
                 
                 <div class="control-group">
-                    <label>Particles per Ring <span class="value-display" id="orbitCountValue">600</span></label>
-                    <input type="range" id="orbitCount" min="100" max="1000" value="600" step="50">
+                    <label>Particles per Ring <span class="value-display" id="orbitCountValue">500</span></label>
+                    <input type="range" id="orbitCount" min="100" max="1000" value="500" step="50">
                 </div>
                 
                 <div class="control-group">
-                    <label>Ring Size <span class="value-display" id="orbitRadiusValue">1.5</span></label>
-                    <input type="range" id="orbitRadius" min="0.5" max="3" value="1.5" step="0.1">
+                    <label>Ring Size <span class="value-display" id="orbitRadiusValue">1.8</span></label>
+                    <input type="range" id="orbitRadius" min="0.5" max="3" value="1.8" step="0.1">
                 </div>
                 
                 <div class="control-group">
-                    <label>Orbital Speed <span class="value-display" id="orbitValue">1.0</span></label>
-                    <input type="range" id="orbit" min="0" max="3" value="1" step="0.1">
+                    <label>Orbital Speed <span class="value-display" id="orbitValue">1.2</span></label>
+                    <input type="range" id="orbit" min="0" max="3" value="1.2" step="0.1">
                 </div>
                 
                 <div class="control-group">
@@ -1210,43 +1249,44 @@ Sheep<!DOCTYPE html>
                         <option value="xz">XZ Plane (Front)</option>
                         <option value="yz">YZ Plane (Side)</option>
                         <option value="random">Random Angles</option>
-                        <option value="gyroscope">Gyroscope (All 3)</option>
+                        <option value="gyroscope" selected>Gyroscope (All 3)</option>
                     </select>
                 </div>
                 
                 <div class="control-group">
-                    <label>Ring Spacing <span class="value-display" id="orbitalSpreadValue">0.3</span></label>
-                    <input type="range" id="orbitalSpread" min="0" max="1" value="0.3" step="0.05">
+                    <label>Ring Spacing <span class="value-display" id="orbitalSpreadValue">0.4</span></label>
+                    <input type="range" id="orbitalSpread" min="0" max="1" value="0.4" step="0.05">
                 </div>
                 
                 <div class="control-group">
-                    <label>Tilt Angle <span class="value-display" id="orbitalTiltValue">0°</span></label>
-                    <input type="range" id="orbitalTilt" min="0" max="90" value="0" step="5">
+                    <label>Tilt Angle <span class="value-display" id="orbitalTiltValue">15°</span></label>
+                    <input type="range" id="orbitalTilt" min="0" max="90" value="15" step="5">
                 </div>
                 
                 <div class="control-group">
                     <label>Independent Speeds
                         <label class="toggle-switch">
-                            <input type="checkbox" id="independentOrbitals">
+                            <input type="checkbox" id="independentOrbitals" checked>
                             <span class="slider"></span>
                         </label>
                     </label>
                 </div>
+                </div>
             </div>
-            
+
             <!-- Colors & Appearance Section -->
-            <div class="control-section">
-                <div class="section-title">🎨 Colors & Appearance</div>
-                
+            <div class="control-section collapsed">
+                <div class="section-title">Colors & Appearance</div>
+                <div class="section-content">
                 <div class="control-group">
                     <label>Color Scheme</label>
                     <div class="color-palette">
-                        <div class="color-option active" data-palette="default" style="background: linear-gradient(135deg, #ff006e, #8338ec, #3a86ff);"></div>
+                        <div class="color-option" data-palette="default" style="background: linear-gradient(135deg, #ff006e, #8338ec, #3a86ff);"></div>
                         <div class="color-option" data-palette="fire" style="background: linear-gradient(135deg, #ff0000, #ff7700, #ffaa00);"></div>
                         <div class="color-option" data-palette="ice" style="background: linear-gradient(135deg, #00d9ff, #0099ff, #0044ff);"></div>
                         <div class="color-option" data-palette="forest" style="background: linear-gradient(135deg, #00ff88, #00cc66, #009944);"></div>
                         <div class="color-option" data-palette="sunset" style="background: linear-gradient(135deg, #ff5e62, #ff9966, #ffcc66);"></div>
-                        <div class="color-option" data-palette="neon" style="background: linear-gradient(135deg, #ff00ff, #00ffff, #00ff00);"></div>
+                        <div class="color-option active" data-palette="neon" style="background: linear-gradient(135deg, #ff00ff, #00ffff, #00ff00);"></div>
                         <div class="color-option" data-palette="gold" style="background: linear-gradient(135deg, #ffd700, #ffaa00, #cc8800);"></div>
                         <div class="color-option" data-palette="monochrome" style="background: linear-gradient(135deg, #ffffff, #888888, #333333);"></div>
                     </div>
@@ -1310,12 +1350,13 @@ Sheep<!DOCTYPE html>
                         </label>
                     </label>
                 </div>
+                </div>
             </div>
-            
+
             <!-- Mouse Interaction Section -->
-            <div class="control-section">
-                <div class="section-title">🖱️ Mouse Interaction</div>
-                
+            <div class="control-section collapsed">
+                <div class="section-title">Mouse Interaction</div>
+                <div class="section-content">
                 <div class="control-group">
                     <label>Mouse Mode</label>
                     <select id="mouseMode">
@@ -1333,12 +1374,13 @@ Sheep<!DOCTYPE html>
                     <label>Force Strength <span class="value-display" id="forceStrengthValue">0.2</span></label>
                     <input type="range" id="forceStrength" min="0" max="2" value="0.2" step="0.1">
                 </div>
+                </div>
             </div>
-            
-            <!-- Gravity Wells Section -->
-            <div class="control-section">
-                <div class="section-title">🌀 Gravity Wells</div>
 
+            <!-- Gravity Wells Section -->
+            <div class="control-section collapsed">
+                <div class="section-title">Gravity Wells</div>
+                <div class="section-content">
                 <div class="control-group">
                     <label>Enable Gravity Wells
                         <label class="toggle-switch">
@@ -1357,12 +1399,13 @@ Sheep<!DOCTYPE html>
                     <label>Well Strength <span class="value-display" id="gravityWellStrengthValue">1.0</span></label>
                     <input type="range" id="gravityWellStrength" min="0.1" max="3" value="1" step="0.1">
                 </div>
+                </div>
             </div>
 
             <!-- Camera Controls Section -->
-            <div class="control-section">
-                <div class="section-title">📷 Camera Controls</div>
-                
+            <div class="control-section collapsed">
+                <div class="section-title">Camera Controls</div>
+                <div class="section-content">
                 <div class="control-group">
                     <label>Field of View <span class="value-display" id="fovValue">75</span></label>
                     <input type="range" id="fov" min="30" max="120" value="75" step="5">
@@ -1371,7 +1414,7 @@ Sheep<!DOCTYPE html>
                 <div class="control-group">
                     <label>Auto-Orbit Camera
                         <label class="toggle-switch">
-                            <input type="checkbox" id="autoOrbit">
+                            <input type="checkbox" id="autoOrbit" checked>
                             <span class="slider"></span>
                         </label>
                     </label>
@@ -1383,41 +1426,44 @@ Sheep<!DOCTYPE html>
                     <button class="tertiary" id="viewFront">Front</button>
                 </div>
                 
-                <button class="secondary" id="resetCamera">🔄 Reset View (C)</button>
+                <button class="secondary" id="resetCamera">Reset View (C)</button>
+                </div>
             </div>
-            
+
             <!-- Presets Section -->
-            <div class="control-section">
-                <div class="section-title">💾 Save & Load Presets</div>
-                
+            <div class="control-section collapsed">
+                <div class="section-title">Presets</div>
+                <div class="section-content">
                 <div class="control-group">
                     <input type="text" id="preset-name" placeholder="Enter preset name..." maxlength="30">
                 </div>
-                
+
                 <div class="button-row">
-                    <button class="secondary" id="save-preset">💾 Save Preset</button>
-                    <button class="tertiary" id="manage-presets">📋 Manage</button>
+                    <button class="secondary" id="save-preset">Save Preset</button>
+                    <button class="tertiary" id="manage-presets">Manage</button>
                 </div>
-                
+
                 <div id="preset-list" style="margin-top: 10px; max-height: 200px; overflow-y: auto;"></div>
+                </div>
             </div>
-            
+
             <!-- Import/Export Section -->
-            <div class="control-section">
-                <div class="section-title">📤 Import / Export</div>
-                
+            <div class="control-section collapsed">
+                <div class="section-title">Import / Export</div>
+                <div class="section-content">
                 <div class="button-row">
-                    <button id="export-settings" class="secondary">📤 Export Code</button>
-                    <button id="import-settings-btn" class="secondary">📥 Import Code</button>
+                    <button id="export-settings" class="secondary">Export Code</button>
+                    <button id="import-settings-btn" class="secondary">Import Code</button>
                 </div>
                 
-                <button id="reset" class="tertiary">🔄 Reset All Settings</button>
+                <button id="reset" class="tertiary">Reset All Settings</button>
+                </div>
             </div>
-            
+
             <!-- Settings & Performance Section -->
-            <div class="control-section">
-                <div class="section-title">⚙️ Settings & Performance</div>
-                
+            <div class="control-section collapsed">
+                <div class="section-title">Settings & Performance</div>
+                <div class="section-content">
                 <div class="control-group">
                     <label>Quality Preset</label>
                     <select id="qualityPreset">
@@ -1456,7 +1502,8 @@ Sheep<!DOCTYPE html>
                 </div>
                 
                 <div class="keyboard-hint">
-                    💡 Keyboard Shortcuts: Space: Pause • S: Screenshot • R: Random • W: Shockwave • C: Reset Camera • M: Lock Camera • D: Diagnostics • F: Fullscreen
+                    Keyboard Shortcuts: Space: Pause | S: Screenshot | R: Random | W: Shockwave | C: Reset Camera | M: Lock Camera | D: Diagnostics | F: Fullscreen
+                </div>
                 </div>
             </div>
         </div>
@@ -1511,27 +1558,27 @@ Sheep<!DOCTYPE html>
 
         // Default parameters
         const DEFAULT_PARAMS = {
-            particleCount: 3000,
+            particleCount: 4000,
             radius: 3,
             thickness: 0.6,
-            rotationSpeed: 1,
+            rotationSpeed: 0.6,
             timeSpeed: 1,
             expansionScale: 1,
-            effectSpeed: 1,
-            orbitRadius: 1.5,
-            orbitCount: 600,
-            orbitIntensity: 1,
-            numOrbitals: 1,
-            orbitalOrientation: 'xy',
-            orbitalSpread: 0.3,
-            orbitalTilt: 0,
-            independentOrbitals: false,
+            effectSpeed: 0.8,
+            orbitRadius: 1.8,
+            orbitCount: 500,
+            orbitIntensity: 1.2,
+            numOrbitals: 3,
+            orbitalOrientation: 'gyroscope',
+            orbitalSpread: 0.4,
+            orbitalTilt: 15,
+            independentOrbitals: true,
             colorShift: 0,
-            shapeType: 'sphere',
-            spriteType: 'happyface',
-            autoOrbit: false,
-            effectType: 'none',
-            colorPalette: 'default',
+            shapeType: 'icosahedron',
+            spriteType: 'circle',
+            autoOrbit: true,
+            effectType: 'breathe',
+            colorPalette: 'neon',
             particleGlow: true,
             particleTrails: false,
             connectionLines: true,
@@ -1583,7 +1630,7 @@ Sheep<!DOCTYPE html>
         function savePreset() {
             const name = document.getElementById('preset-name').value.trim();
             if (!name) {
-                showNotification('⚠️ Please enter a preset name');
+                showNotification('Please enter a preset name');
                 return;
             }
             
@@ -1597,7 +1644,7 @@ Sheep<!DOCTYPE html>
             localStorage.setItem('particlePresets', JSON.stringify(savedPresets));
             document.getElementById('preset-name').value = '';
             updatePresetList();
-            showNotification(`💾 Saved preset: ${name}`);
+            showNotification(`Saved preset: ${name}`);
         }
         
         function loadPreset(index) {
@@ -1608,7 +1655,7 @@ Sheep<!DOCTYPE html>
             updateAllControls();
             createParticleSystem();
             updateBackground();
-            showNotification(`✅ Loaded: ${preset.name}`);
+            showNotification(`Loaded: ${preset.name}`);
         }
         
         function deletePreset(index) {
@@ -1616,7 +1663,7 @@ Sheep<!DOCTYPE html>
             savedPresets.splice(index, 1);
             localStorage.setItem('particlePresets', JSON.stringify(savedPresets));
             updatePresetList();
-            showNotification(`🗑️ Deleted: ${preset.name}`);
+            showNotification(`Deleted: ${preset.name}`);
         }
         
         function updatePresetList() {
@@ -1648,14 +1695,14 @@ Sheep<!DOCTYPE html>
             const code = document.getElementById('export-code');
             code.select();
             document.execCommand('copy');
-            showNotification('📋 Copied to clipboard!');
+            showNotification('Copied to clipboard!');
         }
         
         function importSettings() {
             try {
                 const code = document.getElementById('import-code').value.trim();
                 if (!code) {
-                    showNotification('⚠️ Please paste a settings code');
+                    showNotification('Please paste a settings code');
                     return;
                 }
                 
@@ -1665,9 +1712,9 @@ Sheep<!DOCTYPE html>
                 createParticleSystem();
                 updateBackground();
                 document.getElementById('import-modal').classList.remove('show');
-                showNotification('✅ Settings imported!');
+                showNotification('Settings imported!');
             } catch (e) {
-                showNotification('❌ Invalid settings code');
+                showNotification('Invalid settings code');
             }
         }
         
@@ -1743,7 +1790,7 @@ Sheep<!DOCTYPE html>
             document.getElementById('forceStrengthValue').textContent = params.forceStrength.toFixed(1);
             document.getElementById('numGravityWellsValue').textContent = params.numGravityWells;
             document.getElementById('gravityWellStrengthValue').textContent = params.gravityWellStrength.toFixed(1);
-            document.getElementById('pausePlayBtn').innerHTML = isPaused ? '▶ Play Animation (Space)' : '⏸ Pause Animation (Space)';
+            document.getElementById('pausePlayBtn').innerHTML = isPaused ? 'Play (Space)' : 'Pause (Space)';
             
             document.querySelectorAll('.color-option').forEach(o => {
                 o.classList.toggle('active', o.dataset.palette === params.colorPalette);
@@ -3257,7 +3304,7 @@ Sheep<!DOCTYPE html>
             const gridGroup = new THREE.Group();
             
             // Floor grid
-            const gridHelper = new THREE.GridHelper(60, 60, 0xff006e, 0x2a0033);
+            const gridHelper = new THREE.GridHelper(60, 60, 0x6366f1, 0x1e1b4b);
             gridHelper.position.y = -10;
             gridGroup.add(gridHelper);
             
@@ -3277,7 +3324,7 @@ Sheep<!DOCTYPE html>
                 vertices.push(x, 10, z);
             }
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            const material = new THREE.LineBasicMaterial({ color: 0x8338ec, transparent: true, opacity: 0.3 });
+            const material = new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.3 });
             const lines = new THREE.LineSegments(geometry, material);
             gridGroup.add(lines);
             
@@ -3410,7 +3457,7 @@ Sheep<!DOCTYPE html>
             link.download = `particle-geometry-${Date.now()}.png`;
             link.href = dataURL;
             link.click();
-            showNotification('📸 Screenshot saved!');
+            showNotification('Screenshot saved!');
         }
         
         // Show notification
@@ -3831,10 +3878,10 @@ Sheep<!DOCTYPE html>
         document.getElementById('fullscreen-btn').addEventListener('click', () => {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
-                showNotification('⛶ Fullscreen ON');
+                showNotification('Fullscreen ON');
             } else {
                 document.exitFullscreen();
-                showNotification('⛶ Fullscreen OFF');
+                showNotification('Fullscreen OFF');
             }
         });
         
@@ -3848,8 +3895,8 @@ Sheep<!DOCTYPE html>
 
             // Normal pause toggle
             isPaused = !isPaused;
-            document.getElementById('pausePlayBtn').innerHTML = isPaused ? '▶ Play Animation (Space)' : '⏸ Pause Animation (Space)';
-            showNotification(isPaused ? '⏸ Paused' : '▶ Playing');
+            document.getElementById('pausePlayBtn').innerHTML = isPaused ? 'Play (Space)' : 'Pause (Space)';
+            showNotification(isPaused ? 'Paused' : 'Playing');
         }
 
         // Pause/Play toggle
@@ -3882,7 +3929,7 @@ Sheep<!DOCTYPE html>
                     };
                 } catch (err) {
                     console.error("Error selecting display media:", err);
-                    showNotification('❌ Recording cancelled');
+                    showNotification('Recording cancelled');
                     return;
                 }
             } else {
@@ -3913,7 +3960,7 @@ Sheep<!DOCTYPE html>
                 mediaRecorder = new MediaRecorder(stream, options);
             } catch (e) {
                 console.error('Exception while creating MediaRecorder:', e);
-                showNotification('❌ Recording not supported');
+                showNotification('Recording not supported');
                 return;
             }
             
@@ -3937,17 +3984,17 @@ Sheep<!DOCTYPE html>
                     window.URL.revokeObjectURL(url);
                 }, 100);
                 
-                document.getElementById('recordVideoBtn').innerHTML = '🎥 Record Video';
+                document.getElementById('recordVideoBtn').innerHTML = 'Record Video';
                 document.getElementById('recordVideoBtn').classList.remove('recording');
-                showNotification('💾 Video Saved');
+                showNotification('Video Saved');
                 isRecording = false;
             };
             
             mediaRecorder.start();
             isRecording = true;
-            document.getElementById('recordVideoBtn').innerHTML = '⏹ Stop Recording';
+            document.getElementById('recordVideoBtn').innerHTML = 'Stop Recording';
             document.getElementById('recordVideoBtn').classList.add('recording');
-            showNotification('🔴 Recording Started');
+            showNotification('Recording Started');
         }
 
         function stopRecording() {
@@ -4003,7 +4050,7 @@ Sheep<!DOCTYPE html>
                 case 'w':
                     event.preventDefault();
                     triggerShockwave();
-                    showNotification('💥 Shockwave!');
+                    showNotification('Shockwave!');
                     break;
                 case 'c':
                     if (!event.ctrlKey && !event.metaKey) {
@@ -4034,7 +4081,15 @@ Sheep<!DOCTYPE html>
         
         toggleBtn.addEventListener('click', toggleControls);
         closeBtn.addEventListener('click', toggleControls);
-        
+
+        // Collapsible sections
+        document.querySelectorAll('.control-section .section-title').forEach(title => {
+            title.addEventListener('click', (e) => {
+                e.stopPropagation();
+                title.parentElement.classList.toggle('collapsed');
+            });
+        });
+
         // Drag functionality
         let isDraggingPanel = false;
         let dragOffsetX = 0;
@@ -4438,7 +4493,7 @@ Sheep<!DOCTYPE html>
             panVelocity.set(0, 0, 0);
             currentZoom = 8;
             autoOrbitAngle = 0;
-            showNotification('📷 Camera Reset');
+            showNotification('Camera Reset');
         }
         
         document.getElementById('resetCamera').addEventListener('click', resetCamera);
@@ -4447,19 +4502,19 @@ Sheep<!DOCTYPE html>
         document.getElementById('viewTop').addEventListener('click', () => {
             mouseX = 0;
             mouseY = 0.5;
-            showNotification('📷 Top View');
+            showNotification('Top View');
         });
         
         document.getElementById('viewSide').addEventListener('click', () => {
             mouseX = 0.5;
             mouseY = 0;
-            showNotification('📷 Side View');
+            showNotification('Side View');
         });
         
         document.getElementById('viewFront').addEventListener('click', () => {
             mouseX = 0;
             mouseY = 0;
-            showNotification('📷 Front View');
+            showNotification('Front View');
         });
         
         // Orbital presets
@@ -4479,7 +4534,7 @@ Sheep<!DOCTYPE html>
             
             updateAllControls();
             createParticleSystem();
-            showNotification('⚛️ Atom Configuration');
+            showNotification('Atom Configuration');
         });
         
         document.getElementById('preset-solar').addEventListener('click', () => {
@@ -4499,7 +4554,7 @@ Sheep<!DOCTYPE html>
             
             updateAllControls();
             createParticleSystem();
-            showNotification('🌍 Solar System Configuration');
+            showNotification('Solar System Configuration');
         });
         
         document.getElementById('preset-galaxy').addEventListener('click', () => {
@@ -4520,7 +4575,7 @@ Sheep<!DOCTYPE html>
             
             updateAllControls();
             createParticleSystem();
-            showNotification('🌌 Galaxy Configuration');
+            showNotification('Galaxy Configuration');
         });
         
         // Actions
@@ -4605,7 +4660,7 @@ Sheep<!DOCTYPE html>
             // Reset animation delay timer
             animationStartTime = performance.now();
             
-            const message = `🎲 Randomized!
+            const message = `Randomized!
 Shape: ${params.shapeType.charAt(0).toUpperCase() + params.shapeType.slice(1)}
 Sprite: ${params.spriteType.charAt(0).toUpperCase() + params.spriteType.slice(1)}
 Palette: ${params.colorPalette.charAt(0).toUpperCase() + params.colorPalette.slice(1)}
@@ -4623,7 +4678,7 @@ Background: ${params.backgroundType.charAt(0).toUpperCase() + params.backgroundT
             
             if (demoMode) {
                 // Start demo mode
-                btn.textContent = '⏸️ Stop Demo';
+                btn.textContent = 'Stop Demo';
                 btn.classList.add('active');
                 intervalInput.disabled = true;
                 timerDisplay.style.display = 'block';
@@ -4639,10 +4694,10 @@ Background: ${params.backgroundType.charAt(0).toUpperCase() + params.backgroundT
                 
                 // Start the timer
                 startDemoTimer();
-                showNotification('🎬 Demo mode started!');
+                showNotification('Demo mode started!');
             } else {
                 // Stop demo mode
-                btn.textContent = '▶️ Start Demo';
+                btn.textContent = 'Start Demo';
                 btn.classList.remove('active');
                 intervalInput.disabled = false;
                 timerDisplay.style.display = 'none';
@@ -4652,7 +4707,7 @@ Background: ${params.backgroundType.charAt(0).toUpperCase() + params.backgroundT
                     clearInterval(demoTimer);
                     demoTimer = null;
                 }
-                showNotification('⏹️ Demo mode stopped');
+                showNotification('Demo mode stopped');
             }
         }
         
@@ -4694,7 +4749,7 @@ Background: ${params.backgroundType.charAt(0).toUpperCase() + params.backgroundT
             updateAllControls();
             updateBackground();
             createParticleSystem();
-            showNotification('🔄 Reset Complete');
+            showNotification('Reset Complete');
         });
         
         // Initialize
@@ -4705,7 +4760,7 @@ Background: ${params.backgroundType.charAt(0).toUpperCase() + params.backgroundT
                 createParticleSystem();
                 updatePresetList();
                 animate();
-                showNotification('🚀 Ultimate Particle Explorer Ready!');
+                showNotification('Particle Explorer Ready!');
             } catch (error) {
                 console.error('Initialization error:', error);
                 document.getElementById('loading').textContent = 'Error: ' + error.message;
